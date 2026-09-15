@@ -24,3 +24,123 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Shared landing-page colors keep every section in sync with the navbar switch. */
+.landing-theme {
+  --landing-bg: #ffffff;
+  --landing-text: #0f172a;
+  --landing-muted: #475569;
+  --landing-subtle: #64748b;
+  --landing-accent: #047857;
+  --landing-nav: #ffffff;
+  --landing-brand: #0f172a;
+  --landing-brand-accent: #064e3b;
+  --landing-section: #f5fdf9;
+  --landing-card: #ffffff;
+  --landing-border: #d1e6db;
+  --landing-badge-bg: #ecfdf5;
+  --landing-badge-text: #047857;
+  --landing-switch: #64748b;
+  background-color: var(--landing-bg);
+  color: var(--landing-text);
+  color-scheme: light;
+}
+
+.landing-theme[data-landing-theme="emerald"] {
+  --landing-bg: #062b21;
+  --landing-text: #effff7;
+  --landing-muted: #bddccd;
+  --landing-subtle: #a0c5b3;
+  --landing-accent: #6ee7b7;
+  --landing-nav: #083b2d;
+  --landing-brand: #effff7;
+  --landing-brand-accent: #6ee7b7;
+  --landing-section: #073326;
+  --landing-card: #0d4233;
+  --landing-border: #29634e;
+  --landing-badge-bg: #15533e;
+  --landing-badge-text: #a7f3d0;
+  --landing-switch: #059669;
+  color-scheme: dark;
+}
+
+.landing-nav {
+  background-color: var(--landing-nav);
+  border-color: var(--landing-border);
+}
+.landing-brand { color: var(--landing-brand); }
+.landing-brand-accent { color: var(--landing-brand-accent); }
+.landing-accent { color: var(--landing-accent); }
+.landing-muted { color: var(--landing-muted); }
+.landing-subtle { color: var(--landing-subtle); }
+.landing-tools {
+  background-color: var(--landing-section);
+  border-color: var(--landing-border);
+}
+.landing-card {
+  background-color: var(--landing-card);
+  border-color: var(--landing-border);
+}
+.landing-badge {
+  background-color: var(--landing-badge-bg);
+  color: var(--landing-badge-text);
+}
+.landing-toggle {
+  color: var(--landing-brand);
+  border-color: currentColor;
+}
+.landing-toggle:hover { background-color: var(--landing-badge-bg); }
+.landing-switch { background-color: var(--landing-switch); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .landing-theme,
+  .landing-theme :where(.landing-nav, .landing-brand, .landing-brand-accent, .landing-accent, .landing-muted, .landing-subtle, .landing-tools, .landing-card, .landing-badge, .landing-toggle, .landing-switch) {
+    transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+  }
+}
+
+/* Leave space above sections when navigating through anchor links. */
+.landing-theme section[id] {
+  scroll-margin-top: 24px;
+}
+
+/* A short entrance from slightly below the final position. */
+@keyframes landing-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply motion only when the visitor has not requested reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Animate the hero when the page loads. */
+  .landing-theme main > :first-child {
+    animation: landing-enter 600ms ease-out both;
+  }
+
+  /* Study-tool cards respond to mouse and keyboard interaction. */
+  #study-tools a.group {
+    transition: transform 220ms ease;
+  }
+
+  #study-tools a.group:focus-visible {
+    transform: translateY(-4px);
+  }
+}
+
+/* Hover movement only on devices that support precise hover. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  #study-tools a.group:hover {
+    transform: translateY(-4px);
+  }
+}
