@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+/* Account theme is rendered by the student layout; System needs no JS or flash. */
+@custom-variant dark {
+  &:where([data-app-theme="dark"], [data-app-theme="dark"] *) { @slot; }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-app-theme="system"], [data-app-theme="system"] *) { @slot; }
+  }
+}
+
+[data-reading-size="large"] .study-reading {
+  font-size: 1.125rem;
+  line-height: 1.9;
+}
+
+.student-space[data-reduce-motion="true"] *,
+.student-space[data-reduce-motion="true"] *::before,
+.student-space[data-reduce-motion="true"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+html:has(.student-space[data-reduce-motion="true"]) { scroll-behavior: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .student-space *, .student-space *::before, .student-space *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -87,7 +115,6 @@ body {
 }
 .landing-toggle {
   color: var(--landing-brand);
-  border-color: currentColor;
 }
 .landing-toggle:hover { background-color: var(--landing-badge-bg); }
 .landing-switch { background-color: var(--landing-switch); }
@@ -129,18 +156,81 @@ body {
   }
 
   /* Study-tool cards respond to mouse and keyboard interaction. */
-  #study-tools a.group {
+  #study-tools .group {
     transition: transform 220ms ease;
   }
 
-  #study-tools a.group:focus-visible {
+  #study-tools .group:focus-visible {
     transform: translateY(-4px);
   }
 }
 
 /* Hover movement only on devices that support precise hover. */
 @media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
-  #study-tools a.group:hover {
+  #study-tools .group:hover {
     transform: translateY(-4px);
   }
+}
+
+/* One shared, theme-aware auth dialog for landing-page entry points. */
+.auth-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--landing-card);
+  color: var(--landing-text);
+  box-shadow: 0 32px 100px #001d2440, 0 4px 20px #001d2415;
+}
+.auth-dialog::backdrop { background: #031d1980; backdrop-filter: blur(7px); }
+.auth-panel { padding: 24px 32px 26px; }
+.auth-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.auth-wordmark { display: inline-flex; align-items: baseline; font-size: 20px; font-weight: 750; letter-spacing: -1px; }
+.auth-wordmark > span:first-child { color: var(--landing-accent); }
+.auth-wordmark-dot { width: 6px; height: 6px; margin-left: 4px; border-radius: 50%; background: var(--landing-accent); }
+.auth-close { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -10px; border-radius: 50%; color: var(--landing-muted); cursor: pointer; }
+.auth-close:hover { background: var(--landing-badge-bg); }
+.auth-eyebrow { margin-top: 28px; font-size: 10px; font-weight: 650; letter-spacing: 1.7px; text-transform: uppercase; color: var(--landing-accent); }
+.auth-title { margin-top: 12px; max-width: 340px; font-size: clamp(28px, 6vw, 36px); line-height: 1.12; font-weight: 650; letter-spacing: -1.4px; }
+.auth-description { margin-top: 12px; color: var(--landing-muted); font-size: 14px; line-height: 1.7; }
+.auth-form { display: grid; gap: 18px; margin-top: 28px; }
+.auth-form label { font-size: 12px; font-weight: 600; }
+.auth-label-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.auth-input { display: block; width: 100%; min-height: 48px; margin-top: 8px; padding: 12px 14px; border: 1px solid var(--landing-border); border-radius: 10px; background: var(--landing-bg); color: var(--landing-text); font-size: 16px; outline: none; }
+.auth-input::placeholder { color: var(--landing-subtle); }
+.auth-input:focus { border-color: var(--landing-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--landing-accent) 15%, transparent); }
+.auth-hint { margin-top: 8px; color: var(--landing-subtle); font-size: 11px; }
+.auth-text-button { min-height: 28px; font-size: 12px; font-weight: 600; color: var(--landing-accent); cursor: pointer; text-underline-offset: 4px; }
+.auth-text-button:hover { text-decoration: underline; }
+.auth-status { font-size: 13px; line-height: 1.5; color: var(--landing-accent); }
+.auth-status:empty { display: none; }
+.auth-status[data-error="true"] { color: #b91c1c; }
+[data-landing-theme="emerald"] .auth-status[data-error="true"] { color: #fca5a5; }
+.auth-submit { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; padding: 12px 18px; border-radius: 10px; background: #047857; color: white; font-size: 14px; font-weight: 600; cursor: pointer; }
+.auth-submit:hover { background: #065f46; }
+.auth-submit:disabled, .auth-text-button:disabled { cursor: wait; opacity: .6; }
+.auth-switch-copy { text-align: center; font-size: 12px; color: var(--landing-muted); }
+.auth-footnote { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--landing-border); color: var(--landing-subtle); text-align: center; font-size: 10px; letter-spacing: .2px; }
+.auth-dialog button:focus-visible { outline: 2px solid var(--landing-accent); outline-offset: 3px; }
+@keyframes auth-appear { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes auth-disappear { to { opacity: 0; transform: translateY(8px) scale(.98); } }
+@keyframes auth-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes auth-fade-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .auth-dialog[open] { animation: auth-appear 240ms cubic-bezier(.2,.8,.2,1) both; }
+  .auth-dialog[open]::backdrop { animation: auth-fade-in 200ms ease both; }
+  .auth-dialog[data-closing="true"] { animation: auth-disappear 160ms ease both; }
+  .auth-dialog[data-closing="true"]::backdrop { animation: auth-fade-out 160ms ease both; }
+  .auth-content { animation: auth-appear 200ms ease both; }
+  .auth-input, .auth-submit, .auth-close { transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
+}
+@media (max-width: 420px) {
+  .auth-panel { padding: 18px 22px 22px; }
+  .auth-eyebrow { margin-top: 18px; }
 }

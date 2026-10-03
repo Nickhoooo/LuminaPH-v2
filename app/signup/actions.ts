@@ -13,6 +13,18 @@ export async function signup(
 ): Promise<SignupState> {
   const emailInput = formData.get("email");
   const password = formData.get("password");
+  const displayNameInput = formData.get("full_name");
+
+  if (
+    typeof displayNameInput !== "string" ||
+    !displayNameInput.trim() ||
+    displayNameInput.trim().length > 80
+  ) {
+    return {
+      status: "error",
+      message: "Enter a display name of 1–80 characters.",
+    };
+  }
 
   if (
     typeof emailInput !== "string" ||
@@ -45,6 +57,9 @@ export async function signup(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      data: { full_name: displayNameInput.trim() },
+    },
   });
 
   if (error) {

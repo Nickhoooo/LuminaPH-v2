@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { AuthTrigger } from "@/components/auth/AuthModal";
 
 const studyTools = [
   {
@@ -68,11 +68,11 @@ export default function StudyTools() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {studyTools.map((tool) => (
-            <Link
+            <AuthTrigger
               key={tool.id}
-              href="/login"
+              mode="login"
               aria-label={`${tool.name} — log in or register`}
-              className="group relative isolate flex min-h-[360px] flex-col justify-end overflow-hidden rounded-2xl bg-slate-900 p-7 text-white focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-emerald-600"
+              className="group relative isolate flex min-h-[360px] cursor-pointer flex-col justify-end overflow-hidden rounded-2xl bg-slate-900 p-7 text-left text-white focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-emerald-600"
             >
               <Image
                 src={tool.image}
@@ -109,7 +109,7 @@ export default function StudyTools() {
                   </span>
                 </div>
               </div>
-            </Link>
+            </AuthTrigger>
           ))}
         </div>
       </div>

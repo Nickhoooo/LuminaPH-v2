@@ -1,20 +1,20 @@
-import Link from "next/link";
+import { AuthTrigger } from "@/components/auth/AuthModal";
 
 const groupFeatures = [
   {
-    title: "One shared study shelf",
+    title: "Share notes and study guides",
     description:
-      "Keep your group’s selected guides, flashcards, and quizzes together.",
+      "Bring selected notes and study guides from your Library into your group’s shared materials.",
   },
   {
-    title: "Questions with context",
+    title: "Follow one shared study track",
     description:
-      "Discuss the study material you’re working on, right where it belongs.",
+      "Your group owner prepares five lessons and five quizzes for everyone to study at their own pace.",
   },
   {
-    title: "Review at your own pace",
+    title: "See each other’s progress",
     description:
-      "Try the same practice set without needing everyone online at once.",
+      "See completed lessons and quizzes for each member. Individual scores and answers stay private.",
   },
 ];
 
@@ -28,7 +28,7 @@ export default function StudyGroups() {
       <div className="mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <p className="landing-accent text-sm font-semibold">
-            Study Groups · Coming soon
+            Study Groups
           </p>
 
           <h2
@@ -41,17 +41,17 @@ export default function StudyGroups() {
           </h2>
 
           <p className="landing-muted mt-5 max-w-lg leading-7">
-            We’re building private study spaces where you can invite
-            classmates, share selected materials, and work through
-            difficult topics together.
+            Create a study group, invite classmates with a six-letter code,
+            and work through a shared study plan. Keep your materials and
+            everyone’s progress in one place.
           </p>
 
-          <Link
-            href="/login"
+          <AuthTrigger
+            mode="signup"
             className="mt-8 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-600"
           >
             Log in or register
-          </Link>
+          </AuthTrigger>
         </div>
 
         <ul className="divide-y divide-[var(--landing-border)]">
