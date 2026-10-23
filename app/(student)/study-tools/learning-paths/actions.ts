@@ -48,7 +48,7 @@ export async function createLearningPath(_previous: LearningPathState, form: For
       let message = "We could not confirm your generation allowance.";
       if (allowance === "unauthorized") message = "Please log in again.";
       if (allowance === "cooldown") message = "Please wait at least 60 seconds between generation attempts.";
-      if (allowance === "user_limit") message = "You have used your 5 generation attempts in the last 24 hours.";
+      if (allowance === "user_limit") message = "You have reached your material generation allowance for the last 24 hours.";
       if (allowance === "app_limit") message = "LuminaPH has reached its shared allowance. Try again later.";
       return { status: "error", message };
     }

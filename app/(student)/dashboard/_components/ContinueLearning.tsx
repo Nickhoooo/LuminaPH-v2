@@ -35,10 +35,12 @@ export default async function ContinueLearning() {
         <div className="rounded-xl border border-[#e6eadd] dark:border-stone-700 bg-white dark:bg-stone-900 p-5"><p className="text-sm text-stone-500 dark:text-stone-400">Saved materials</p><p className="mt-2 text-3xl font-semibold">{materials?.count ?? "—"}</p><p className="mt-2 text-xs text-stone-500 dark:text-stone-400">Notes, guides, flashcard decks, and quizzes</p></div>
         <div className="rounded-xl border border-[#e6eadd] dark:border-stone-700 bg-white dark:bg-stone-900 p-5"><p className="text-sm text-stone-500 dark:text-stone-400">Completed quiz attempts</p><p className="mt-2 text-3xl font-semibold">{attempts?.count ?? "—"}</p><p className="mt-2 text-xs text-stone-500 dark:text-stone-400">Includes each saved retake</p></div>
       </div>
-      <LearningPathSummary
+      <div className="grid items-start gap-6 xl:grid-cols-2">
+      <div className="min-w-0"><LearningPathSummary
         paths={paths?.data ?? null}
         totalCount={paths?.count ?? null}
-      />
+      /></div>
+      <div className="min-w-0">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2
           id="continue-title"
@@ -79,6 +81,8 @@ export default async function ContinueLearning() {
           Create your first study guide <ArrowRight size={17} />
         </Link>
       </div>}
+      </div>
+      </div>
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Latest quiz results</h2>
         {!attempts ? <p role="alert" className="rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 text-sm">Could not load your quiz results. Refresh this page to try again.</p> : attempts.data?.length ? <ul className="space-y-3">{attempts.data.map(attempt => {

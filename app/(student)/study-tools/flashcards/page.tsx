@@ -27,13 +27,13 @@ export default async function FlashcardsPage({ searchParams }: {
       .eq("user_id", user.id).eq("material_type", "study_guide")
       .order("created_at", { ascending: false }).order("id")
       .range((currentPage - 1) * 20, currentPage * 20 - 1);
-    return <section className="mx-auto max-w-3xl space-y-5">
+    return <section className="w-full min-w-0 space-y-5">
       <Link href="/study-tools/flashcards" className="text-sm text-emerald-800 dark:text-emerald-200 underline">Back to topic mode</Link>
       <h1 className="text-3xl font-semibold">Choose a saved study guide</h1>
       <p className="text-sm text-stone-600 dark:text-stone-300">Create a separate flashcard deck from a guide you have already saved.</p>
       {error ? <p role="alert">We could not load your guides. Please refresh to try again.</p> : <>
         {!guides?.length && <p>No guides on this page. <Link href="/study-tools/study-guides" className="text-emerald-800 dark:text-emerald-200 underline">Create a study guide</Link></p>}
-        <ul className="space-y-3">{guides?.map((item) => <li key={item.id}><Link href={"/study-tools/flashcards?guide=" + item.id} className="block rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 hover:border-emerald-700"><span className="font-semibold">{item.title}</span><span className="mt-1 block text-sm text-stone-600 dark:text-stone-300">{item.subject} · {new Date(item.created_at).toLocaleDateString("en-PH", { timeZone: "Asia/Manila" })}</span></Link></li>)}</ul>
+        <ul className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">{guides?.map((item) => <li key={item.id}><Link href={"/study-tools/flashcards?guide=" + item.id} className="block rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 hover:border-emerald-700"><span className="font-semibold">{item.title}</span><span className="mt-1 block text-sm text-stone-600 dark:text-stone-300">{item.subject} · {new Date(item.created_at).toLocaleDateString("en-PH", { timeZone: "Asia/Manila" })}</span></Link></li>)}</ul>
         <nav aria-label="Guide pages" className="flex gap-4 text-sm text-emerald-800 dark:text-emerald-200">
           {currentPage > 1 && <Link href={"?mode=guide&page=" + (currentPage - 1)}>Previous</Link>}
           {(count ?? 0) > currentPage * 20 && <Link href={"?mode=guide&page=" + (currentPage + 1)}>Next</Link>}

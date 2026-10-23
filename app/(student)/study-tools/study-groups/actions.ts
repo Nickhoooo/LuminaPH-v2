@@ -454,7 +454,7 @@ export async function deleteStudyGroup(
       return { status: "error", message: "Please log in again." };
     const { data: group, error: loadError } = await supabase
       .from("study_groups")
-      .select("name, owner_id, avatar_path")
+      .select("name, owner_id, avatar_path, cover_path")
       .eq("id", groupId)
       .maybeSingle();
     if (loadError)
@@ -478,11 +478,12 @@ export async function deleteStudyGroup(
         message: "Could not confirm deletion. Check My Groups before retrying.",
       };
     // Database deletion has succeeded. Storage cleanup must not undo navigation.
-    if (group?.avatar_path) {
+    const imagePaths = [group?.avatar_path, group?.cover_path].filter((path): path is string => Boolean(path));
+    if (imagePaths.length) {
       try {
         const { error: cleanupError } = await supabase.storage
           .from(avatarBucket)
-          .remove([group.avatar_path]);
+          .remove(imagePaths);
         if (cleanupError)
           console.warn("Group deleted; avatar cleanup needs retry.");
       } catch {

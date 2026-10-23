@@ -125,7 +125,7 @@ export async function askTutor(
         unauthorized: "Please log in again.",
         unavailable: "This conversation is unavailable.",
         cooldown: "Please wait at least 10 seconds between chat attempts.",
-        user_limit: "You have used your 20 chat attempts in the last 24 hours.",
+        user_limit: "You have reached your tutor allowance for the last 24 hours.",
         app_limit: "LuminaPH has reached its shared chat allowance. Try again later.",
       };
       return {

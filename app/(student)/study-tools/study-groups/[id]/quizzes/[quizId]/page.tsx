@@ -88,7 +88,7 @@ export default async function GroupQuizPage({
   if (readingError) return loadError;
   if (!reading) {
     return (
-      <section className="mx-auto max-w-3xl space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+      <section className="w-full min-w-0 space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
         <p className="text-xs font-semibold uppercase tracking-widest text-emerald-800 dark:text-emerald-200">
           Quiz locked
         </p>
@@ -177,7 +177,7 @@ export default async function GroupQuizPage({
     .limit(10);
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6">
+    <div className="w-full min-w-0 space-y-6">
       <nav className="flex flex-wrap gap-3" aria-label="Quiz navigation">
         <Link href={`${groupUrl}#group-track`} className={button}>
           Back to group
@@ -196,6 +196,8 @@ export default async function GroupQuizPage({
           questions may contain mistakes.
         </p>
       </header>
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0">
       {quiz.generated_at ? (
         <GroupQuizPractice
           key={`${quizId}:${attemptId ?? "new"}`}
@@ -221,7 +223,8 @@ export default async function GroupQuizPage({
           )}
         </section>
       )}
-      <section className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+      </div>
+      <section className="min-w-0 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
         <h2 className="font-semibold">Your latest 10 attempts</h2>
         {historyError ? (
           <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-200">
@@ -262,6 +265,7 @@ export default async function GroupQuizPage({
           </ul>
         )}
       </section>
+      </div>
       <Link href={`${groupUrl}#group-track`} className={button}>
         Back to group track
       </Link>

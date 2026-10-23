@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@/lib/supabase/server";
-import { InvitationResponse, MarkReadForm } from "./NotificationControls";
+import { MarkReadForm } from "./NotificationControls";
+import NotificationCard from "./NotificationCard";
+import { readReceivedInvitations } from "./invitations";
 import AnnouncementForm from "./AnnouncementForm";
 
 export default async function NotificationsPage({
@@ -46,12 +48,14 @@ export default async function NotificationsPage({
   const invitationIds = (notifications ?? []).flatMap((item) =>
     item.invitation_id ? [item.invitation_id] : [],
   );
-  const invitations = invitationIds.length
-    ? await supabase.rpc("get_received_group_invitations", { p_ids: invitationIds })
-    : { data: [], error: null };
+  const invitations = await readReceivedInvitations(
+    supabase,
+    user.id,
+    invitationIds,
+  );
   const { data: isAdmin } = await supabase.rpc("is_app_administrator");
   return (
-    <section className="mx-auto max-w-3xl space-y-6">
+    <section className="w-full min-w-0 space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold">Notifications</h1>
@@ -92,91 +96,22 @@ export default async function NotificationsPage({
           {unreadOnly ? "You’re all caught up." : "No notifications yet."}
         </p>
       ) : (
-        <ul className="space-y-4">
-          {notifications.map((item) => {
-            const invitation = invitations.data?.find(
-              (invite: { id: string; status: string }) => invite.id === item.invitation_id,
-            );
-            const pendingInvite =
-              invitation?.status === "pending";
-            // Never turn arbitrary stored text into an external redirect.
-            const href =
-              typeof item.href === "string" &&
-              /^\/(library\/|study-tools\/study-groups\/|settings$)/.test(
-                item.href,
-              )
-                ? item.href
-                : null;
-            return (
-              <li
-                key={item.id}
-                id={`notification-${item.id}`}
-                className={`scroll-mt-6 rounded-2xl border bg-white dark:bg-stone-900 p-5 ${item.read_at ? "border-stone-200 dark:border-stone-700" : "border-emerald-500"}`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="break-words font-semibold">{item.title}</h2>
-                  {!item.read_at && (
-                    <span className="rounded-full bg-emerald-50 dark:bg-emerald-950 px-2 py-1 text-xs text-emerald-800 dark:text-emerald-200">
-                      New
-                    </span>
-                  )}
-                </div>
-                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-stone-600 dark:text-stone-300">
-                  {item.message}
-                </p>
-                <time
-                  dateTime={item.created_at}
-                  className="mt-3 block text-xs text-stone-500 dark:text-stone-400"
-                >
-                  {new Date(item.created_at).toLocaleString("en-PH", {
-                    timeZone: "Asia/Manila",
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
-                </time>
-                {item.kind === "group_invite" &&
-                  (invitations.error ? (
-                    <p
-                      role="alert"
-                      className="mt-3 text-sm text-red-700 dark:text-red-200"
-                    >
-                      Could not check this invitation. Refresh to try again.
-                    </p>
-                  ) : pendingInvite ? (
-                    <InvitationResponse id={invitation.id} />
-                  ) : (
-                    <p className="mt-3 text-sm text-stone-500 dark:text-stone-400">
-                      Invitation{" "}
-                      {invitation?.status === "accepted"
-                        ? "accepted. Find your group in Study Groups."
-                        : invitation?.status === "declined"
-                          ? "declined."
-                          : "expired or no longer available."}
-                    </p>
-                  ))}
-                <div className="mt-4 flex flex-wrap items-start gap-3">
-                  {href && (
-                    <Link
-                      href={href}
-                      className="rounded-xl bg-emerald-800 px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      View details
-                    </Link>
-                  )}
-                  {item.kind === "group_invite" &&
-                    invitation?.status === "accepted" && (
-                      <Link
-                        href="/study-tools/study-groups"
-                        className="rounded-xl bg-emerald-800 px-4 py-2 text-sm text-white"
-                      >
-                        My groups
-                      </Link>
-                    )}
-                  {!item.read_at && <MarkReadForm id={item.id} />}
-                </div>
-              </li>
-            );
-          })}
+        <ul className="grid items-start gap-4 xl:grid-cols-2">
+          {notifications.map((item) => (
+            <li
+              key={item.id}
+              id={`notification-${item.id}`}
+              className="scroll-mt-24"
+            >
+              <NotificationCard
+                notification={item}
+                invitation={invitations.data.find(
+                  (invite) => invite.id === item.invitation_id,
+                )}
+                invitationError={invitations.error}
+              />
+            </li>
+          ))}
         </ul>
       )}
       {!error && totalPages > 1 && (

@@ -1,21 +1,45 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 
 const ThemeContext = createContext({
   emerald: false,
   toggle: () => {},
 });
 
-export default function LandingTheme({ children }: { children: ReactNode }) {
-  const [emerald, setEmerald] = useState(false);
+function subscribeTheme(callback: () => void) {
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+
+export default function LandingTheme({
+  children,
+  initialTheme = "system",
+}: {
+  children: ReactNode;
+  initialTheme?: "light" | "dark" | "system";
+}) {
+  const [theme, setTheme] = useState(initialTheme);
+  const systemDark = useSyncExternalStore(
+    subscribeTheme,
+    () => window.matchMedia("(prefers-color-scheme: dark)").matches,
+    () => false,
+  );
+  const emerald = theme === "dark" || (theme === "system" && systemDark);
 
   return (
     <ThemeContext.Provider
-      value={{ emerald, toggle: () => setEmerald((current) => !current) }}
+      value={{ emerald, toggle: () => setTheme(emerald ? "light" : "dark") }}
     >
       <div
-        data-landing-theme={emerald ? "emerald" : "light"}
+        data-landing-theme={theme === "dark" ? "emerald" : theme}
         className="landing-theme flex min-h-dvh flex-1 flex-col"
       >
         {children}

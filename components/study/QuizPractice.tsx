@@ -60,7 +60,7 @@ export default function QuizPractice({ studySetId, questions }: { studySetId: st
 
   return <form action={action} onSubmit={event => {
     if (!isLastQuestion || answeredCount !== questions.length || pending) event.preventDefault();
-  }} className="mx-auto max-w-3xl space-y-4" aria-busy={pending}>
+  }} className="w-full min-w-0 space-y-4" aria-busy={pending}>
     <input type="hidden" name="studySetId" value={studySetId} />
     <div className="flex items-center justify-between gap-3 text-sm">
       <p className="font-semibold text-emerald-800 dark:text-emerald-200" role="status">Question {questionIndex + 1} of {questions.length}</p>

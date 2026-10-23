@@ -31,7 +31,7 @@ export default function StudyGroupsMenu({
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen(!open)}
-        className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-[13px] ${active ? "bg-[#eaf1e5] dark:bg-stone-800 font-bold text-[#315e42] dark:text-stone-200" : "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
+        className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-[13px] ${active ? "bg-emerald-50 dark:bg-stone-800 font-bold text-emerald-800 dark:text-stone-200" : "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
       >
         <Users size={19} />
         <span>Study Groups</span>

@@ -55,7 +55,7 @@ export default function FlashcardForm({ sourceNote, sourceGuide }: { sourceNote?
   const inputStyle = "mt-2 w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 p-3";
 
   return (
-    <section className="mx-auto max-w-3xl space-y-6">
+    <section className="w-full min-w-0 space-y-6">
       <header><h1 className="font-serif text-3xl sm:text-4xl">Flashcards</h1><p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-300">Start with a topic or turn a saved study guide into recall practice. Personal notes can also be opened from your Library.</p></header>
       {editing && (
         <form action={formAction} aria-busy={pending} className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
@@ -84,7 +84,7 @@ export default function FlashcardForm({ sourceNote, sourceGuide }: { sourceNote?
             <p>The saved text is sent to our AI provider when you generate. Your original note stays in your Library.</p>
             <div className="flex flex-wrap gap-4"><Link href={"/library/" + sourceNote.id} className="text-emerald-800 dark:text-emerald-200 underline">View note</Link><Link href="/study-tools/flashcards" className="text-emerald-800 dark:text-emerald-200 underline">Start without notes</Link></div>
           </div>}
-          <fieldset disabled={pending} className="space-y-5 disabled:opacity-60">
+          <fieldset disabled={pending} className="grid items-start gap-5 md:grid-cols-2 disabled:opacity-60">
             <legend className="sr-only">Flashcard generation preferences</legend>
             {!sourceGuide && <>
             <div><label htmlFor="flash-level" className="text-sm font-medium">Education level</label><select id="flash-level" name="educationLevel" required value={fields.educationLevel} onChange={(e) => update("educationLevel", e.target.value)} className={inputStyle}><option value="" disabled>Select your level</option><option value="junior-high">Junior High School</option><option value="senior-high">Senior High School</option><option value="college">College</option><option value="independent">Independent learning</option></select></div>
@@ -92,7 +92,7 @@ export default function FlashcardForm({ sourceNote, sourceGuide }: { sourceNote?
             <div><label htmlFor="flash-subject" className="text-sm font-medium">Subject</label><input id="flash-subject" name="subject" required maxLength={120} value={fields.subject} onChange={(e) => update("subject", e.target.value)} placeholder="Example: Biology" className={inputStyle} /></div>
             <div><label htmlFor="flash-goal" className="text-sm font-medium">What do you want to remember?</label><textarea id="flash-goal" name="learningGoal" required maxLength={1000} rows={4} value={fields.learningGoal} onChange={(e) => update("learningGoal", e.target.value)} placeholder="Example: Key terms and processes in photosynthesis" className={inputStyle} /></div>
             </>}
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2 md:col-span-2">
               <div><label htmlFor="flash-language" className="text-sm font-medium">Language</label><select id="flash-language" name="language" value={fields.language} onChange={(e) => update("language", e.target.value)} className={inputStyle}><option value="english">English</option><option value="filipino">Filipino</option><option value="taglish">Taglish</option></select></div>
               <div><label htmlFor="flash-count" className="text-sm font-medium">Number of cards</label><select id="flash-count" name="cardCount" value={fields.cardCount} onChange={(e) => update("cardCount", e.target.value)} className={inputStyle}><option value="5">5 cards</option><option value="10">10 cards</option></select></div>
             </div>

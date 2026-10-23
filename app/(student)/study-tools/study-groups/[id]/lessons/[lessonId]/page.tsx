@@ -78,7 +78,7 @@ export default async function GroupLessonPage({
   ]);
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6">
+    <div className="w-full min-w-0 space-y-6">
       <Link href={groupUrl} className={buttonStyle}>
         Back to group track
       </Link>
@@ -100,10 +100,11 @@ export default async function GroupLessonPage({
             Shared AI-generated lesson. Check important facts against your class
             materials.
           </p>
-          <article className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 sm:p-8">
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+          <article className="min-w-0 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 sm:p-8">
             <StudyContent content={lesson.content} />
           </article>
-          <section className="space-y-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950 p-6">
+          <section className="space-y-4 rounded-2xl xl:sticky xl:top-24 bg-emerald-50 dark:bg-emerald-950 p-6">
             <h2 className="font-semibold text-emerald-950 dark:text-emerald-200">
               Finished reading?
             </h2>
@@ -127,6 +128,7 @@ export default async function GroupLessonPage({
               />
             )}
           </section>
+          </div>
         </>
       ) : (
         <section className="space-y-4 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">

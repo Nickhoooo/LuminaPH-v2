@@ -100,6 +100,7 @@ export default async function LibraryPage({
         </div>
       </header>
 
+      <div className="grid items-start gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
       <section aria-labelledby="saved-materials-heading" className="space-y-4">
         <div className="flex items-center justify-between gap-3">
           <h2 id="saved-materials-heading" className="text-xl font-semibold">
@@ -223,6 +224,7 @@ export default async function LibraryPage({
           <StudySetForm />
         </div>
       </details>
+      </div>
     </section>
   );
 }

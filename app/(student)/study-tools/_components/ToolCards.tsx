@@ -71,7 +71,7 @@ export default function ToolCards({
                 <span className="absolute left-4 top-3 font-serif text-xs text-[#33492b] dark:text-stone-200">
                   0{index + 1}
                 </span>
-                <span className="absolute bottom-3 left-3 rounded bg-white/90 px-2 py-1 text-[9px] tracking-wide text-[#627357] dark:text-stone-200">
+                <span className="absolute bottom-3 left-3 rounded bg-white/90 dark:bg-stone-900/90 px-2 py-1 text-[9px] tracking-wide text-[#627357] dark:text-stone-200">
                   {label}
                 </span>
               </div>

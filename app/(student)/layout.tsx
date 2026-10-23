@@ -8,6 +8,9 @@ import DashboardHeader from "./_components/DashboardHeader";
 import StudyPreferencesProvider from "@/components/study/StudyPreferencesProvider";
 import { readStudyPreferences } from "@/lib/study-preferences";
 import { defaultAppSettings } from "@/lib/app-settings";
+import AppearanceProvider from "@/components/study/AppearanceProvider";
+import { getProfileImages } from "@/lib/profile-images";
+import { cookies } from "next/headers";
 
 // Next.js wraps every page inside (student) with this layout.
 export default async function StudentLayout({
@@ -21,10 +24,23 @@ export default async function StudentLayout({
     error,
   } = await supabase.auth.getUser();
   if (error || !user) redirect("/login");
+
+  const { data: isSuspended, error: suspensionError } = await supabase.rpc(
+    "is_current_account_suspended",
+  );
+
+  if (suspensionError || typeof isSuspended !== "boolean") {
+    redirect("/account-status-check");
+  }
+
+  if (isSuspended) {
+    redirect("/account-suspended");
+  }
+
   const [settingsResult, notificationResult] = await Promise.all([
     supabase
       .from("user_settings")
-      .select("theme, reading_size, reduce_motion")
+      .select("theme, reading_size, reduce_motion, accent_color")
       .eq("user_id", user.id)
       .maybeSingle(),
     supabase
@@ -33,7 +49,13 @@ export default async function StudentLayout({
       .eq("user_id", user.id)
       .is("read_at", null),
   ]);
-  const settings = settingsResult.data ?? defaultAppSettings;
+  const themeCookie = (await cookies()).get("lumina-theme")?.value;
+  const fallbackTheme =
+    themeCookie === "light" || themeCookie === "dark" ? themeCookie : "system";
+  const settings = settingsResult.data ?? {
+    ...defaultAppSettings,
+    theme: fallbackTheme,
+  };
 
   // RLS returns only owned/joined groups. The full paginated list stays on My Groups.
   const {
@@ -56,6 +78,7 @@ export default async function StudentLayout({
     unavailable: Boolean(groupsError),
   };
 
+  const profileImages = await getProfileImages(user.id);
   const metadataName =
     user.user_metadata?.full_name ?? user.user_metadata?.name;
   const displayName =
@@ -64,12 +87,7 @@ export default async function StudentLayout({
       : user.email?.split("@")[0] || "Learner";
 
   return (
-    <div
-      data-app-theme={settings.theme}
-      data-reading-size={settings.reading_size}
-      data-reduce-motion={settings.reduce_motion}
-      className="student-space min-h-dvh bg-[#f8f9f5] dark:bg-stone-950 font-sans text-[#233d34] dark:text-stone-200 scheme-light dark:scheme-dark"
-    >
+    <AppearanceProvider settings={settings}>
       <a
         href="#student-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-white dark:focus:bg-stone-900 focus:p-3"
@@ -85,6 +103,7 @@ export default async function StudentLayout({
       {/* RIGHT: header and the current page. */}
       <div className="lg:ml-68">
         <DashboardHeader
+          avatarUrl={profileImages.avatarUrl}
           displayName={displayName}
           email={user.email ?? ""}
           groupNavigation={groupNavigation}
@@ -94,8 +113,17 @@ export default async function StudentLayout({
         />
         <main
           id="student-content"
-          className="mx-auto max-w-[1240px] px-4 pb-8 pt-2 md:px-7 lg:px-12"
+          className="w-full min-w-0 px-4 pb-8 pt-6 md:px-6 xl:px-8"
         >
+          {settingsResult.error && (
+            <p
+              role="alert"
+              className="mb-5 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200"
+            >
+              Your saved appearance could not be loaded. Showing this browser’s
+              last saved theme. Refresh to retry.
+            </p>
+          )}
           <StudyPreferencesProvider
             preferences={readStudyPreferences(user.user_metadata ?? {})}
           >
@@ -113,10 +141,10 @@ export default async function StudentLayout({
       <Link
         href="/study-tools/ai-tutor"
         aria-label="Open AI Tutor"
-        className="fixed bottom-4 right-4 z-30 grid size-13 place-items-center rounded-full border-4 border-[#f8f9f5] dark:border-stone-700 bg-[#245c47] text-white shadow-lg transition-transform hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none sm:bottom-6 sm:right-7"
+        className="fixed bottom-4 right-4 z-30 grid size-13 place-items-center rounded-full border-4 border-[#f8f9f5] dark:border-stone-700 bg-emerald-800 text-white shadow-lg transition-transform hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none sm:bottom-6 sm:right-7"
       >
         <MessageCircle size={24} />
       </Link>
-    </div>
+    </AppearanceProvider>
   );
 }

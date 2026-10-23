@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
 export type LogoutState = {
   message: string;
+  success?: boolean;
 };
 
 export async function logout(): Promise<LogoutState> {
@@ -17,12 +18,12 @@ export async function logout(): Promise<LogoutState> {
     if (error) {
       return { message: "We couldn't log you out. Please try again." };
     }
+    (await cookies()).delete("lumina-theme");
   } catch {
     return { message: "We couldn't log you out. Please try again." };
   }
 
   // Refresh authenticated UI before navigating to the login page.
   revalidatePath("/", "layout");
-  // Keep redirect outside try/catch: Next.js uses it to stop execution.
-  redirect("/login");
+  return { success: true, message: "Logged out." };
 }

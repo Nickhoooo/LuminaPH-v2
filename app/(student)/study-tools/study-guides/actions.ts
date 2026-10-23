@@ -196,7 +196,7 @@ export async function createStudyGuide(
     if (allowance === "user_limit") {
       return {
         status: "error",
-        message: "You have used your 5 generation attempts in the last 24 hours. Please try again when an earlier attempt is more than 24 hours old.",
+        message: "You have reached your material generation allowance for the last 24 hours. Please try again when an earlier attempt is more than 24 hours old.",
       };
     }
 

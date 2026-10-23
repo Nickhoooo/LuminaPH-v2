@@ -2,22 +2,42 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { readReceivedInvitations } from "./invitations";
+import type {
+  NotificationItem,
+  ReceivedInvitation,
+} from "./notification-types";
 
 export type NotificationState = {
   status: "idle" | "success" | "error";
   message: string;
+  invitationStatus?: "accepted" | "declined" | "expired";
+};
+export type NotificationPreview = {
+  error: boolean;
+  unread: number;
+  items: NotificationItem[];
+  invitations: ReceivedInvitation[];
+  invitationError: boolean;
 };
 const validId =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export async function getNotificationPreview() {
+export async function getNotificationPreview(): Promise<NotificationPreview> {
+  const unavailable: NotificationPreview = {
+    error: true,
+    unread: 0,
+    items: [],
+    invitations: [],
+    invitationError: false,
+  };
   try {
     const supabase = await createClient();
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
-    if (error || !user) return { error: true, unread: 0, items: [] };
+    if (error || !user) return unavailable;
     const [count, recent] = await Promise.all([
       supabase
         .from("notifications")
@@ -26,19 +46,30 @@ export async function getNotificationPreview() {
         .is("read_at", null),
       supabase
         .from("notifications")
-        .select("id, title, message, read_at, created_at")
+        .select(
+          "id, kind, title, message, href, invitation_id, read_at, created_at",
+        )
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
         .limit(5),
     ]);
+    const invitations = await readReceivedInvitations(
+      supabase,
+      user.id,
+      (recent.data ?? []).flatMap((item) =>
+        item.invitation_id ? [item.invitation_id] : [],
+      ),
+    );
     return {
       error: Boolean(count.error || recent.error),
       unread: count.count ?? 0,
       items: recent.data ?? [],
+      invitations: invitations.data,
+      invitationError: invitations.error,
     };
   } catch {
-    return { error: true, unread: 0, items: [] };
+    return unavailable;
   }
 }
 
@@ -117,13 +148,19 @@ export async function respondToInvitation(
     if (data === "accepted")
       return {
         status: "success",
+        invitationStatus: "accepted",
         message:
           "Invitation accepted. Your group is available in Study Groups.",
       };
     if (data === "declined")
-      return { status: "success", message: "Invitation declined." };
+      return {
+        status: "success",
+        invitationStatus: "declined",
+        message: "Invitation declined.",
+      };
     return {
       status: "error",
+      ...(data === "expired" ? { invitationStatus: "expired" as const } : {}),
       message: "This invitation has expired or is no longer available.",
     };
   } catch {

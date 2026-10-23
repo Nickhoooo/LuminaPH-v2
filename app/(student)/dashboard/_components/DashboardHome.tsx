@@ -19,7 +19,7 @@ export default function DashboardHome({
           <p className="mb-2.5 mt-5 break-words text-sm text-[#657556] dark:text-stone-200">
             Welcome back, {displayName}.
           </p>
-          <h1 className="font-serif text-4xl leading-tight tracking-tight text-[#2c4a36] dark:text-stone-200 xl:text-[43px]">
+          <h1 className="font-serif text-4xl leading-tight tracking-tight text-emerald-900 dark:text-stone-200 xl:text-[43px]">
             What do you want
             <br />
             to learn today?
@@ -32,7 +32,7 @@ export default function DashboardHome({
           <div className="flex flex-wrap gap-3">
             <Link
               href="/dashboard?view=learning"
-              className="inline-flex min-h-11 items-center justify-center gap-3 rounded-lg bg-[#245c47] px-4 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#194734] motion-reduce:transition-none"
+              className="inline-flex min-h-11 items-center justify-center gap-3 rounded-lg bg-emerald-800 px-4 py-3 text-xs font-semibold text-white transition-colors hover:bg-emerald-900 motion-reduce:transition-none"
             >
               Continue Learning <ArrowRight size={17} />
             </Link>

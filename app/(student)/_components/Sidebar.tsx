@@ -13,6 +13,7 @@ import {
   Library,
   Users,
   Settings,
+  MessageSquareWarning,
 } from "lucide-react";
 import LogoutForm from "../dashboard/LogoutForm";
 import StudyGroupsMenu, {
@@ -36,7 +37,7 @@ function StudyToolsMenu({
   const menuId = useId();
 
   let parentStyle = "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800";
-  if (isActive) parentStyle = "bg-[#eaf1e5] dark:bg-stone-800 font-bold text-[#315e42] dark:text-stone-200";
+  if (isActive) parentStyle = "bg-emerald-50 dark:bg-stone-800 font-bold text-emerald-800 dark:text-stone-200";
 
   const toolLinks = [
     { name: "All Study Tools", href: "/study-tools", icon: Layers },
@@ -119,7 +120,9 @@ export default function Sidebar({
 
   let activePage;
 
-  if (pathname === "/settings") {
+  if (pathname === "/feedback") {
+    activePage = "Reports & Feedback";
+  } else if (pathname === "/settings") {
     activePage = "Settings";
   } else if (pathname === "/notifications") {
     activePage = "Notifications";
@@ -151,6 +154,7 @@ export default function Sidebar({
     { name: "Study Tools", href: "/study-tools", icon: Layers },
     { name: "Study Groups", href: "/study-tools/study-groups", icon: Users },
     { name: "Library", href: "/library", icon: Library },
+    { name: "Reports & Feedback", href: "/feedback", icon: MessageSquareWarning },
   ];
 
   return (
@@ -159,7 +163,7 @@ export default function Sidebar({
         href="/dashboard"
         className="flex items-center gap-2 text-[22px] font-bold tracking-tight"
       >
-        <span className="mr-0.5 grid size-9 place-items-center rounded-xl bg-[#edf3e9] dark:bg-stone-800">
+        <span className="mr-0.5 grid size-9 place-items-center rounded-xl bg-emerald-50 dark:bg-stone-800">
           <GraduationCap size={23} />
         </span>
         <span>
@@ -197,12 +201,12 @@ export default function Sidebar({
               href={href}
               onClick={onNavigate}
               aria-current={activePage === name ? "page" : undefined}
-              className={`flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-3 text-[13px] transition-colors motion-reduce:transition-none ${activePage === name ? "bg-[#eaf1e5] dark:bg-stone-800 font-bold text-[#315e42] dark:text-stone-200" : "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
+              className={`flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-3 text-[13px] transition-colors motion-reduce:transition-none ${activePage === name ? "bg-emerald-50 dark:bg-stone-800 font-bold text-emerald-800 dark:text-stone-200" : "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
             >
               <Icon size={19} />
               <span>{name}</span>
               {activePage === name && (
-                <span className="ml-auto size-1.5 rounded-full bg-[#527b41]" />
+                <span className="ml-auto size-1.5 rounded-full bg-emerald-600" />
               )}
             </Link>
           );
@@ -224,7 +228,7 @@ export default function Sidebar({
             href="/settings"
             onClick={onNavigate}
             aria-current={activePage === "Settings" ? "page" : undefined}
-            className={`flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-3 text-[13px] transition-colors motion-reduce:transition-none ${activePage === "Settings" ? "bg-[#eaf1e5] dark:bg-stone-800 font-bold text-[#315e42] dark:text-stone-200" : "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
+            className={`flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-3 text-[13px] transition-colors motion-reduce:transition-none ${activePage === "Settings" ? "bg-emerald-50 dark:bg-stone-800 font-bold text-emerald-800 dark:text-stone-200" : "text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
           >
             <Settings size={19} aria-hidden="true" /> Settings
           </Link>

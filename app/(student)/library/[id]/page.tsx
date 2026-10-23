@@ -259,7 +259,7 @@ export default async function SavedMaterialPage({
         <FlashcardReview key={material.id} cards={cards} />
       )}
       {material.material_type === "quiz" && (
-        <>
+        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
           <QuizPractice
             key={material.id}
             studySetId={material.id}
@@ -268,7 +268,7 @@ export default async function SavedMaterialPage({
               choices,
             }))}
           />
-          <section className="space-y-3">
+          <section className="min-w-0 space-y-3">
             <h2
               id="quiz-attempts"
               className="scroll-mt-24 text-xl font-semibold"
@@ -341,7 +341,7 @@ export default async function SavedMaterialPage({
               </>
             )}
           </section>
-        </>
+        </div>
       )}
       {material.material_type !== "flashcards" &&
         material.material_type !== "quiz" && (

@@ -87,7 +87,7 @@ export async function generateLessonContent(
       const messages: Record<string, string> = {
         unauthorized: "Please log in again.",
         cooldown: "Please wait at least 60 seconds between generation attempts.",
-        user_limit: "You have used your 5 generation attempts in the last 24 hours.",
+        user_limit: "You have reached your material generation allowance for the last 24 hours.",
         app_limit: "LuminaPH has reached its shared allowance. Try again later.",
       };
       return {

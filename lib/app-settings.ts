@@ -1,4 +1,5 @@
 export type AppSettings = {
+  accent_color: string;
   theme: "light" | "dark" | "system";
   reading_size: "normal" | "large";
   reduce_motion: boolean;
@@ -8,6 +9,7 @@ export type AppSettings = {
 };
 
 export const defaultAppSettings: AppSettings = {
+  accent_color: "#059669",
   theme: "system",
   reading_size: "normal",
   reduce_motion: false,

@@ -92,6 +92,27 @@ body {
   color-scheme: dark;
 }
 
+@media (prefers-color-scheme: dark) {
+.landing-theme[data-landing-theme="system"] {
+  --landing-bg: #062b21;
+  --landing-text: #effff7;
+  --landing-muted: #bddccd;
+  --landing-subtle: #a0c5b3;
+  --landing-accent: #6ee7b7;
+  --landing-nav: #083b2d;
+  --landing-brand: #effff7;
+  --landing-brand-accent: #6ee7b7;
+  --landing-section: #073326;
+  --landing-card: #0d4233;
+  --landing-border: #29634e;
+  --landing-badge-bg: #15533e;
+  --landing-badge-text: #a7f3d0;
+  --landing-switch: #059669;
+  color-scheme: dark;
+}
+}
+
+
 .landing-nav {
   background-color: var(--landing-nav);
   border-color: var(--landing-border);
@@ -234,3 +255,6 @@ body {
   .auth-panel { padding: 18px 22px 22px; }
   .auth-eyebrow { margin-top: 18px; }
 }
+
+/* Keep anchors visible below the sticky app header. */
+.student-space [id] { scroll-margin-top: 6rem; }

@@ -7,6 +7,8 @@ import LeaveGroupForm from "../components/LeaveGroupForm";
 import GroupMembers, { type GroupMember } from "../components/GroupMembers";
 import SharedMaterials from "../components/SharedMaterials";
 import GroupDashboard from "../components/GroupDashboard";
+import ProfilePhoto from "@/components/study/ProfilePhoto";
+import PhotoEditor from "@/components/study/PhotoEditor";
 import GroupAvatar from "../components/GroupAvatar";
 import DeleteGroupForm from "../components/DeleteGroupForm";
 import { getGroupAvatarUrls } from "../group-avatar";
@@ -52,13 +54,16 @@ export default async function GroupPage({
 
   const { data: group, error: groupError } = await supabase
     .from("study_groups")
-    .select("id, name, description, owner_id, avatar_path")
+    .select("id, name, description, owner_id, avatar_path, cover_path")
     .eq("id", id)
     .maybeSingle();
 
   if (groupError) {
     return (
-      <div role="alert" className="rounded-xl bg-red-50 dark:bg-red-950 p-5 text-red-700 dark:text-red-200">
+      <div
+        role="alert"
+        className="rounded-xl bg-red-50 dark:bg-red-950 p-5 text-red-700 dark:text-red-200"
+      >
         We could not load this group. Please refresh the page.
       </div>
     );
@@ -69,7 +74,10 @@ export default async function GroupPage({
   }
 
   const isOwner = group.owner_id === authData.user.id;
-  const avatarUrls = await getGroupAvatarUrls([group.avatar_path]);
+  const avatarUrls = await getGroupAvatarUrls([
+    group.avatar_path,
+    group.cover_path,
+  ]);
   const hasDisplayName = [
     authData.user.user_metadata?.full_name,
     authData.user.user_metadata?.name,
@@ -115,7 +123,7 @@ export default async function GroupPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6">
+    <div className="w-full min-w-0 space-y-6">
       <Link
         href="/study-tools/study-groups"
         className="inline-flex rounded-xl border border-stone-300 dark:border-stone-700 px-4 py-2 text-sm font-medium hover:bg-stone-100 dark:hover:bg-stone-800"
@@ -123,6 +131,13 @@ export default async function GroupPage({
         Study Groups / {group.name}
       </Link>
 
+      <div className="overflow-hidden rounded-2xl">
+        <ProfilePhoto
+          src={avatarUrls.get(group.cover_path)}
+          name={group.name}
+          cover
+        />
+      </div>
       <header className="flex items-start gap-4 border-b border-stone-200 dark:border-stone-700 pb-5 sm:gap-5">
         <GroupAvatar
           name={group.name}
@@ -147,6 +162,14 @@ export default async function GroupPage({
           </p>
         </div>
       </header>
+      {isOwner && (
+        <PhotoEditor
+          groupId={group.id}
+          name={group.name}
+          avatarUrl={avatarUrls.get(group.avatar_path)}
+          coverUrl={avatarUrls.get(group.cover_path)}
+        />
+      )}
       <nav
         aria-label="Group dashboard sections"
         className="flex flex-wrap gap-2"
@@ -183,7 +206,10 @@ export default async function GroupPage({
           </summary>
           <div className="mt-4">
             {inviteError ? (
-              <p role="alert" className="text-sm text-red-700 dark:text-red-200">
+              <p
+                role="alert"
+                className="text-sm text-red-700 dark:text-red-200"
+              >
                 Could not load your invite code. Refresh to try again.
               </p>
             ) : (

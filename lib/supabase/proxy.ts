@@ -31,7 +31,43 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getClaims();
+  const {
+    data: claimsData,
+    error: claimsError,
+  } = await supabase.auth.getClaims();
+
+  // Walang authenticated session: walang suspension status na kailangang i-check.
+  if (claimsError || !claimsData?.claims?.sub) {
+    return response;
+  }
+
+  const { data: isSuspended, error: suspensionError } = await supabase.rpc(
+    "is_current_account_suspended",
+  );
+
+  // Fail closed kung hindi makumpirma ang account status.
+  if (suspensionError || typeof isSuspended !== "boolean") {
+    return redirectWithCookies(request, response, "/account-status-check");
+  }
+
+  if (isSuspended) {
+    return redirectWithCookies(request, response, "/account-suspended");
+  }
 
   return response;
+}
+
+function redirectWithCookies(
+  request: NextRequest,
+  currentResponse: NextResponse,
+  path: string,
+) {
+  const redirectResponse = NextResponse.redirect(new URL(path, request.url));
+
+  // Keep any refreshed Supabase session cookies from updateSession.
+  for (const cookie of currentResponse.cookies.getAll()) {
+    redirectResponse.cookies.set(cookie);
+  }
+
+  return redirectResponse;
 }

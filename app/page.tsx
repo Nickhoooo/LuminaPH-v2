@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import LandingTheme from "@/components/landing/LandingTheme";
 import AuthModal from "@/components/auth/AuthModal";
 import Navbar from "@/components/landing/Navbar";
@@ -7,14 +8,21 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import StudyGroups from "@/components/landing/StudyGroups";
 import Footer from "@/components/landing/Footer";
 
-export default async function Home({ searchParams }: {
+export default async function Home({
+  searchParams,
+}: {
   searchParams: Promise<{ auth?: string | string[] }>;
 }) {
   const { auth } = await searchParams;
-  const initialMode = auth === "login" || auth === "signup" || auth === "recovery" ? auth : null;
+  const initialMode =
+    auth === "login" || auth === "signup" || auth === "recovery" ? auth : null;
+
+  const savedTheme = (await cookies()).get("lumina-theme")?.value;
+  const initialTheme =
+    savedTheme === "light" || savedTheme === "dark" ? savedTheme : "system";
 
   return (
-    <LandingTheme>
+    <LandingTheme initialTheme={initialTheme}>
       <AuthModal initialMode={initialMode}>
         <Navbar />
         <main className="flex-1">

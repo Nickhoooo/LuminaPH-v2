@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isAccentColor } from "@/lib/appearance";
+import { cookies } from "next/headers";
 
 export type SettingsState = {
   status: "idle" | "success" | "error";
@@ -12,9 +14,11 @@ export async function saveSettings(
   _previous: SettingsState,
   form: FormData,
 ): Promise<SettingsState> {
+  const accentColor = form.get("accent_color");
   const theme = form.get("theme");
   const readingSize = form.get("reading_size");
   if (
+    !isAccentColor(accentColor) ||
     typeof theme !== "string" ||
     !["light", "dark", "system"].includes(theme) ||
     typeof readingSize !== "string" ||
@@ -35,6 +39,7 @@ export async function saveSettings(
       {
         user_id: user.id,
         theme,
+        accent_color: accentColor.toLowerCase(),
         reading_size: readingSize,
         reduce_motion: form.get("reduce_motion") === "on",
         quiz_notifications: form.get("quiz_notifications") === "on",
@@ -54,6 +59,14 @@ export async function saveSettings(
       message: "Connection interrupted. Reload to check your saved settings.",
     };
   }
+  // A preference only, never an authentication credential. Also used on the landing page.
+  (await cookies()).set("lumina-theme", theme, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 365,
+  });
   revalidatePath("/", "layout");
   return { status: "success", message: "Settings saved for your account." };
 }

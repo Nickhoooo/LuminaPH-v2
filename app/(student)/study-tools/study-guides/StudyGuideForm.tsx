@@ -161,6 +161,7 @@ export default function StudyGuideForm({
         {displayedResult?.guide && (
           <p className="text-sm text-stone-600 dark:text-stone-300">Update your details to generate a new version. This uses another attempt and saves a separate guide.</p>
         )}
+        <div className="grid items-start gap-5 md:grid-cols-2">
         <div>
           <label htmlFor="level" className="block text-sm font-medium">
             Education level
@@ -248,6 +249,7 @@ export default function StudyGuideForm({
           </select>
         </div>
 
+        </div>
         <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">
           {generationNotice} Check important facts against your
           class materials. You can make up to 5 attempts in 24 hours, with at

@@ -45,7 +45,7 @@ export default function NoticeDialog({
       <button
         type="button"
         onClick={onClose}
-        className="inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-lg bg-[#245c47] px-4 py-3 text-xs font-semibold text-white hover:bg-[#194734]"
+        className="inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-lg bg-emerald-800 px-4 py-3 text-xs font-semibold text-white hover:bg-emerald-900"
       >
         Got it <ArrowRight size={16} />
       </button>

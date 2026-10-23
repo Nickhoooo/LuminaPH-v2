@@ -49,5 +49,20 @@ export async function login(
     };
   }
 
-  redirect("/dashboard");
+  const { data: isAdmin, error: roleError } = await supabase.rpc(
+  "is_app_administrator",
+);
+
+if (roleError) {
+  return {
+    status: "error",
+    message: "Could not check your account access. Please try logging in again.",
+  };
+}
+
+if (isAdmin === true) {
+  redirect("/admin");
+}
+
+redirect("/dashboard");
 }

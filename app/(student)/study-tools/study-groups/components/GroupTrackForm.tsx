@@ -233,7 +233,10 @@ export default function GroupTrackForm({ groupId }: { groupId: string }) {
           Uses general AI knowledge. Check important facts against your class
           materials. Generating an outline uses one of your study-tool
           generation attempts, even if the AI request fails. Saving the outline
-          does not use another attempt.
+          does not use another attempt. Preparing all five lessons and their quizzes
+          takes ten more generations. Standard accounts have five attempts per
+          24 hours, shared with other study tools, so prepare activities gradually.
+          Members can read saved lessons and take ready quizzes without generating again.
         </p>
         <button className={buttonStyle} disabled={pending}>
           {pending ? (

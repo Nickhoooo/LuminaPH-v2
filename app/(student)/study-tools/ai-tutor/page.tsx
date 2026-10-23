@@ -67,12 +67,20 @@ export default async function AiTutorPage({ searchParams }: PageProps) {
     const savedTurns = [...(history.data ?? [])].reverse().map(turn => ({ ...turn, saved: true }));
 
     return (
-      <section className="mx-auto max-w-3xl space-y-5">
+      <section className="w-full min-w-0 space-y-5">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-semibold">AI Tutor</h1>
           <Link href="/study-tools/ai-tutor" className="rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-4 py-2 text-sm text-emerald-800 dark:text-emerald-200">Choose another guide</Link>
         </header>
-        <TutorChat key={`${guide.id}-${currentPage}`} guide={guide} savedTurns={savedTurns} historyPage={currentPage} />
+        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="min-w-0"><TutorChat key={`${guide.id}-${currentPage}`} guide={guide} savedTurns={savedTurns} historyPage={currentPage} /></div>
+        <aside className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5 xl:sticky xl:top-24 dark:border-stone-700 dark:bg-stone-900">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">Current guide</h2>
+          <p className="break-words font-semibold">{guide.title}</p>
+          <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">Ask for examples, simpler explanations, or practice questions about this guide.</p>
+          <Link href={`/library/${guide.id}`} className="inline-flex rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-medium text-white">Read your guide</Link>
+        </aside>
+        </div>
         <nav aria-label="Conversation history" className="flex flex-wrap gap-4 text-sm text-emerald-800 dark:text-emerald-200">
           {currentPage < totalPages && <Link href={`?guide=${guide.id}&page=${currentPage + 1}`}>Older messages</Link>}
           {currentPage > 1 && <Link href={`?guide=${guide.id}&page=${currentPage - 1}`}>Newer messages</Link>}
@@ -91,7 +99,7 @@ export default async function AiTutorPage({ searchParams }: PageProps) {
     .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
   return (
-    <section className="mx-auto max-w-3xl space-y-5">
+    <section className="w-full min-w-0 space-y-5">
       <header>
         <h1 className="text-3xl font-semibold">AI Tutor</h1>
         <p className="mt-3 text-sm leading-6 text-stone-500 dark:text-stone-400">Choose a saved guide or path lesson to discuss. Your conversation stays connected to that material.</p>
@@ -99,7 +107,7 @@ export default async function AiTutorPage({ searchParams }: PageProps) {
       {error ? <p role="alert">Could not load your guides. Please refresh.</p> : (
         <>
           {!guides?.length && <p>No guides on this page. <Link href="/study-tools/study-guides" className="text-emerald-800 dark:text-emerald-200 underline">Create a study guide</Link> to start.</p>}
-          <ul className="space-y-3">
+          <ul className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
             {guides?.map(guide => (
               <li key={guide.id}>
                 <Link href={"/study-tools/ai-tutor?guide=" + guide.id} className="block rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 hover:border-emerald-700">

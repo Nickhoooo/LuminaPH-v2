@@ -227,7 +227,7 @@ if (noteIdInput !== null) {
       } else if (allowance === "cooldown") {
         message = "Please wait at least 60 seconds between generation attempts.";
       } else if (allowance === "user_limit") {
-        message = "You have used your 5 generation attempts in the last 24 hours.";
+        message = "You have reached your material generation allowance for the last 24 hours.";
       } else if (allowance === "app_limit") {
         message = "LuminaPH has reached its shared allowance. Try again later.";
       }

@@ -53,14 +53,15 @@ export default async function SharedMaterialPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6">
+    <div className="w-full min-w-0 space-y-6">
       <Link
         href={groupUrl}
         className="inline-flex rounded-xl border border-stone-300 dark:border-stone-700 px-4 py-2 text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-800"
       >
         Back to group materials
       </Link>
-      <header className="space-y-3">
+      <div className="grid items-start gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+      <header className="space-y-3 xl:sticky xl:top-24">
         <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
           Shared {material.material_type === "notes" ? "note" : "study guide"}
         </p>
@@ -82,7 +83,7 @@ export default async function SharedMaterialPage({
           </p>
         )}
       </header>
-      <article className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+      <article className="min-w-0 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
         {material.material_type === "study_guide" ? (
           <StudyContent content={material.content} />
         ) : (
@@ -91,6 +92,7 @@ export default async function SharedMaterialPage({
           </div>
         )}
       </article>
+      </div>
       <Link
         href={groupUrl}
         className="inline-flex rounded-xl bg-emerald-800 px-4 py-3 text-sm font-medium text-white hover:bg-emerald-900"
