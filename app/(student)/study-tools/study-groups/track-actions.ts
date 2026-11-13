@@ -3,6 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import {
   generateLearningPathOutline,
@@ -136,7 +137,7 @@ export async function generateGroupTrackOutline(
         trackId: existing.id,
       };
     }
-    if (!process.env.GROQ_API_KEY?.trim()) {
+    if (!hasAnyAiProviderKey()) {
       return {
         status: "error",
         message: "Study track generation is temporarily unavailable.",

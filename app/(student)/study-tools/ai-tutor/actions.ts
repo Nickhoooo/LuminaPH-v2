@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import { generateTutorReply } from "@/lib/ai/tutor";
 
@@ -109,7 +110,7 @@ export async function askTutor(
     if (historyError) {
       return { status: "error", message: "We could not load your conversation context. Please try again." };
     }
-    if (!process.env.GROQ_API_KEY?.trim()) {
+    if (!hasAnyAiProviderKey()) {
       return { status: "error", message: "AI Tutor is temporarily unavailable." };
     }
 

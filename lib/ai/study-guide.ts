@@ -1,5 +1,5 @@
 import "server-only";
-import { generateStudyText } from "./groq";
+import { generateStudyTextWithModel } from "./groq";
 
 type StudyGuideInput = {
   educationLevel: string;
@@ -68,11 +68,11 @@ Do not invent references or claim you searched the web,
 verified a syllabus, or checked current information.
 `;
 
-  const content = await generateStudyText(prompt);
+  const { content, model } = await generateStudyTextWithModel(prompt, "study_guide");
 
   if (content.length > 20_000) {
     throw new Error("The study guide exceeds the storage limit.");
   }
 
-  return content;
+  return { content, model };
 }

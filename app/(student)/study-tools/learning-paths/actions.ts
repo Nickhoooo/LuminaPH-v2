@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import { generateLearningPathOutline, type LearningPathOutline } from "@/lib/ai/learning-paths";
 
@@ -39,7 +40,7 @@ export async function createLearningPath(_previous: LearningPathState, form: For
     if (!["junior-high", "senior-high", "college", "independent"].includes(educationLevel)) return { status: "error", message: "Choose a valid education level." };
     if (language !== "english" && language !== "filipino" && language !== "taglish") return { status: "error", message: "Choose a valid language." };
     if (!/^[3-8]$/.test(count)) return { status: "error", message: "Choose between 3 and 8 lessons." };
-    if (!process.env.GROQ_API_KEY?.trim()) return { status: "error", message: "Learning path generation is temporarily unavailable." };
+    if (!hasAnyAiProviderKey()) return { status: "error", message: "Learning path generation is temporarily unavailable." };
 
     // Validation comes before reserving an attempt. All study tools share this allowance.
     const { data: allowance, error: allowanceError } = await supabase.rpc("reserve_ai_generation");

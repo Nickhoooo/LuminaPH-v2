@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import { generateFlashcards, type Flashcard } from "@/lib/ai/flashcards";
-import { STUDY_MODEL } from "@/lib/ai/groq";
 
 export type FlashcardState = {
   status: "idle" | "error" | "success";
@@ -120,7 +120,7 @@ export async function createFlashcards(
     }
 
     // Check server configuration before attempting generation.
-if (!process.env.GROQ_API_KEY?.trim()) {
+if (!hasAnyAiProviderKey()) {
   return {
     status: "error",
     message: "Flashcard generation is temporarily unavailable.",
@@ -238,8 +238,9 @@ if (noteIdInput !== null) {
     if (cardCountInput === "10") cardCount = 10;
 
     let cards: Flashcard[];
+    let model = "";
     try {
-      cards = await generateFlashcards({
+      const generated = await generateFlashcards({
         educationLevel,
         academicDetails,
         subject,
@@ -249,6 +250,8 @@ if (noteIdInput !== null) {
         sourceNote,
         sourceGuide,
       });
+      cards = generated.cards;
+      model = generated.model;
     } catch (error) {
       let message = "We could not generate a complete deck. This attempt counts toward your limit.";
       if (error instanceof Groq.APIError && error.status === 429) {
@@ -287,7 +290,7 @@ if (noteIdInput !== null) {
           language,
           cardCount,
           provider: "groq",
-          model: STUDY_MODEL,
+          model,
           sourceStatus,
           sourceNote: noteReference ?? null,
           sourceGuide: guideReference ?? null,

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import {
   generateQuiz,
@@ -133,7 +134,7 @@ export async function generateGroupQuiz(
       ) {
         return { status: "error", message: "The track language is invalid." };
       }
-      if (!process.env.GROQ_API_KEY?.trim())
+      if (!hasAnyAiProviderKey())
         return {
           status: "error",
           message: "Quiz generation is temporarily unavailable.",
@@ -164,8 +165,7 @@ export async function generateGroupQuiz(
         };
       }
       try {
-        questions = validateQuizQuestions(
-          await generateQuiz({
+        const generated = await generateQuiz({
             subject: track.subject,
             educationLevel: track.education_level,
             academicDetails: track.academic_details,
@@ -173,7 +173,9 @@ export async function generateGroupQuiz(
             learningGoal: lesson.objective,
             questionCount: count === "10" ? 10 : 5,
             sourceGuide: { title: lesson.title, content: lesson.content },
-          }),
+          }, "group_quiz");
+        questions = validateQuizQuestions(
+          generated.questions,
           Number(count),
         );
       } catch (error) {

@@ -1,128 +1,93 @@
 # LuminaPH Handoff
 
-Updated: 2026-10-18 (Asia/Singapore)
+Updated: 2026-11-11 (Asia/Singapore)
 
 ## Current stopping point
 
-We are working on **Admin → Users → account management**, currently the **ban/unban foundation**.
+The latest broad scan found the Admin roadmap has moved on since the 2026-10-18 notes. **Overview, Users/account management, Reports & Feedback, and Activity Log all have local implementations. AI Control now has a local Groq model registry, per-tool routing, one bounded fallback attempt, and a prompt draft/test/publish/rollback flow.** The user confirmed on 2026-11-11 that the read-only Supabase catalog check returned `true` for every checked object from migrations `202611010001` and `202611010002` in the selected project, and confirmed applying `202611110001`. On 2026-11-11, all seven AI tools passed synthetic preview using `openai/gpt-oss-120b` and were published as v1 in the Admin UI. Per user request, the seven publication links were then removed in Supabase SQL Editor and their v1 rows archived, restoring code-defined prompts; a read-only count confirmed zero active publications. Prompt history remains available. Rollback testing with multiple published versions, usage telemetry/quota visibility, account deletion, and remaining live validation are outstanding.
 
-- The user confirmed that `202610080002_add_account_suspensions.sql` was run successfully.
-- `202610080003_add_account_suspension_actions.sql` is present locally. It adds `set_account_suspension(target_id, suspended, reason, request_id)`, applies the existing admin permission rules, writes the suspension and activity log in one transaction, and safely handles matching retries.
-- The user has **not confirmed that 202610080003 was run**. It needs the audit columns from `202610060009_add_set_user_generation_allowance.sql` (`request_id`, `details`) and assumes the earlier admin foundation/role migrations are present.
-- `scripts/check-account-suspensions.cjs` passed 38 isolated PGlite assertions. This did not connect to Supabase and is not a real concurrent-session test.
-- **Suspension enforcement is now partly implemented locally.** See the 2026-10-18 update below. It is not live until the new migration is applied and direct RPC paths are verified. There is no ban UI yet.
+### Live database status
 
-2026-10-18 enforcement work added locally:
+- The user previously confirmed `202610080002_add_account_suspensions.sql` was applied successfully.
+- On 2026-11-11, the user ran the read-only Supabase catalog query and confirmed every check returned `true`: model registry/settings tables and initial RPCs from `202611010001`, plus tool routes and routing RPCs from `202611010002`. This verifies the expected objects exist in the selected Supabase project; it is not a full runtime/permissions test.
+- The user confirmed applying `202611110001_add_ai_prompt_versioning.sql` to Supabase. The app then loaded all seven prompt panels without a missing-migration warning. In `/admin/ai-control`, all seven tools' v1 prompts passed synthetic preview on `openai/gpt-oss-120b`. At the user's request, the seven publication links were removed through Supabase SQL Editor and each v1 row was archived; a read-only count returned zero active publications. This restores each tool's code-defined prompt while retaining version history. Learning paths initially returned an incomplete response because the generic sample exceeded the 450-token preview cap; a one-lesson sample and 700-token cap fixed it. Rollback and independent role/runtime checks remain unverified.
+- No later migration application status was confirmed during the 2026-11-01 scan. Treat all other local migrations as **not verified live**, even when their UI or RPC callers are present.
+- The application status of `202610080003_add_account_suspension_actions.sql` and `202610180001` through `202610180009` remains unconfirmed. Do not rerun migrations that are already applied.
+- The assistant has no live Supabase connection for this scan. Local code and migration files do not prove production state.
 
-- `lib/supabase/proxy.ts` checks session claims and calls `is_current_account_suspended()` on matched app routes. Suspended users go to `/account-suspended`; status-check errors go to `/account-status-check` (fail-closed). Refreshed auth cookies are preserved across redirects.
-- `app/account-suspended/page.tsx` shows a generic message and reuses the existing logout confirmation/storage cleanup flow. `app/account-status-check/page.tsx` offers retry via `/dashboard` and logout. Both paths are intentionally excluded from the proxy matcher so the user can see the message and sign out.
-- `app/(student)/layout.tsx` and `lib/require-admin.ts` repeat the account-status check as defense in depth.
-- `202610180001_enforce_suspensions_on_rls.sql` adds a restrictive authenticated policy to each public RLS table, DML statement triggers to those tables, and a restrictive policy to `storage.objects` when present. It also defines a private active-account guard and updates `is_app_administrator`, `is_super_administrator`, and `is_study_group_member` so protected admin/group reads reject suspended callers. This migration depends on 002 (user reported applied), but not 003.
-- `app/(admin)/admin/users/suspension-actions.ts` loads suspension details for an admin and calls the protected SQL ban/unban function with server-side validation.
-- `app/(admin)/components/AdminUserSuspension.tsx` displays status/reason and provides required-reason confirmation for suspend/restore with a stable retry ID. `AdminUserProfile.tsx` loads status alongside usage and renders the control.
-- TypeScript passed. Targeted ESLint stalled without output and was interrupted. No SQL parser test or live database check was done.
-- **Next:** confirm whether 003 ran; validate 180001 in isolated Postgres before asking the user to apply it; audit remaining callable `SECURITY DEFINER` read functions and storage URL behavior; then user applies the migration and tests with ordinary/admin accounts.
-- No service-role key or service-role client use was found in the repo. The app redirects existing sessions on their next matched request, and RLS/trigger checks block database access, but Supabase Auth sessions are not revoked and pre-existing signed URLs may continue until expiry. Do not claim those are revoked.
+## Current Admin implementation in the repo
 
-## Repository scan on 2026-10-18
+- **Overview:** `/admin` displays platform totals and generation-attempt activity. Attempts may include failed calls after reservation and developer tests; these are not provider quota remaining.
+- **Users:** `/admin/users` supports search/filtering and pagination, and user profile views include usage, configurable generation allowances, admin role controls, and temporary/permanent account suspension controls.
+- **Regular Admin access:** server action in `app/(admin)/admin/users/admin-role-actions.ts`; database management logic is in `202610180003_manage_regular_admin_roles.sql`. The UI/database permissions are intended for Super Admin management only.
+- **Account suspension:** controls and server action are present, including reasons, duration, retry IDs, and status display. Local proxy/layout/admin checks and the RLS/trigger enforcement migration are present. Live enforcement and direct RPC/storage behavior still need verification.
+- **Reports & Feedback:** user submission flow is under `app/(student)/feedback`; Admin review, status/reply, screenshot display, and resolved-report cleanup are under `app/(admin)/admin/reports`. Relevant migrations are `202610180007`–`202610180009`.
+- **Activity Log:** `/admin/activity-log` displays account-management events with pagination. The admin activity and alert migration is `202610180006_admin_activity_and_alerts.sql`.
+- **AI Control (in progress):** `/admin/ai-control` registers, enables/disables, activates, and removes Groq models, assigns a primary plus optional fallback for seven tools, and has prompt draft/test/publish/rollback UI and server actions. Optional prompt guidance currently falls back to code-defined prompts for all seven tools because their publication links were removed per user request; archived prompt versions remain in history. Preview uses fixed synthetic requests, not student data, and may consume provider quota. Writes are Super Admin-only and logged in the Admin Activity Log. The user confirmed the registry/routing objects from migrations `202611010001` and `202611010002` exist in Supabase via a read-only catalog query, and confirmed applying prompt migration `202611110001`. Broader runtime behavior has not been verified. Usage/quota views remain unimplemented, and the current implementation supports Groq only.
+- **Account deletion:** no account deletion flow is present in the Admin route inventory. It needs a data ownership/retention review before implementation.
 
-Scanned the application route inventory, admin and student layouts, auth/session proxy, login flow, migrations, AI model configuration, key notification/settings paths, TODO/placeholder markers, and current git status. The repo has about 215 tracked/untracked source files outside generated dependencies and 27 `page`/`route` entries. This was a broad architecture/status scan, not a line-by-line audit of every file or a live production security review.
+## Account-management and enforcement details
 
-### Product and route map
+The local migration sequence includes:
 
-Student app routes include dashboard, Library and material pages, profile, settings, notifications, Study Tools, study guides, flashcards, quizzes, learning paths, AI Tutor, Study Groups, group materials, and group shared lessons/quizzes. Auth routes include login, signup, password reset, and email confirmation.
+- `202610080002_add_account_suspensions.sql`: private suspension storage and current-account status function. User confirmed this migration was applied.
+- `202610080003_add_account_suspension_actions.sql`: protected suspend/restore RPC with audit event and retry handling. Application status unconfirmed.
+- `202610180001_enforce_suspensions_on_rls.sql`: restrictive RLS policies and DML triggers, storage policy where available, and suspended-account checks in protected helper functions. Application status unconfirmed.
+- `202610180002_block_suspended_group_invite_lookup.sql`: blocks suspended callers from group invite lookup. Application status unconfirmed.
+- `202610180003_manage_regular_admin_roles.sql`: grant/revoke regular Admin management. Application status unconfirmed.
+- `202610180004_add_temporary_account_suspensions.sql`: duration support for suspensions. Application status unconfirmed.
+- `202610180005_filter_admin_users.sql`: Admin user list filtering. Application status unconfirmed.
+- `202610180006_admin_activity_and_alerts.sql`: activity and alert support. Application status unconfirmed.
+- `202610180007_add_reports_and_feedback.sql`, `202610180008_report_screenshots_and_full_admin_alerts.sql`, and `202610180009_delete_resolved_reports.sql`: report storage/review, screenshot and alert support, and resolved-report cleanup. Application status unconfirmed.
+- `202611010001_add_ai_model_registry.sql`: global Groq model registry, Super Admin management RPCs, model selection for authenticated AI requests, and activity-log entries. Requires the existing admin/activity/suspension foundations (including `admin_activity_log.details` and `is_current_account_suspended()`). Registry/settings objects and core functions confirmed present in Supabase on 2026-11-11.
+- `202611010002_add_ai_tool_routing.sql`: routes seven AI tools to registered primary/fallback Groq models; adds Super Admin route management, fallback dependency checks, global-route reset behavior, and audit logging. Requires `202611010001` and the same admin/activity/suspension foundations. Route table and core routing functions confirmed present in Supabase on 2026-11-11.
+- `202611110001_add_ai_prompt_versioning.sql`: per-tool prompt drafts, synthetic preview test records, publishing, rollback, and audit entries. The user confirmed applying it. All seven tools' v1 prompts passed synthetic previews and were published through the Admin UI on 2026-11-11, then archived and unpublished via SQL Editor at the user's request; zero active prompt publications was confirmed. Learning paths uses a smaller synthetic sample and a higher preview-only token cap after the original response was truncated. The matching local AI calls fall back to code-defined guidance while retaining mandatory system instructions; previews may consume Groq quota.
 
-Prior work in this project covered:
+Suspension enforcement is defense in depth: the proxy checks matched app routes, student/admin server paths also check status, and the SQL migration is intended to protect direct database access. Verify the installed RPCs and policies against the live project before relying on this behavior. No service-role key/client use was found in the earlier repository inspection; do not claim that other Supabase Auth sessions are revoked. Existing signed URLs may remain usable until expiry.
 
-- Study material saving, AI study guides, flashcards, quizzes and attempts.
-- Personal learning paths with saved lesson guides and tutor conversations.
-- Study Groups: short invite codes, membership, member display names, leave/remove/delete, shared material snapshots, group avatars, and a shared five-lesson/five-quiz track with individual progress. A lesson must be marked read/complete before its quiz.
-- Notifications, profile/settings, theme/accent preferences, and profile photos.
-- Admin overview, searchable/paginated users, profile/usage modal, and configurable usage allowances.
+## Generation allowances
 
-These are based on repo structure and prior implementation notes, not a fresh end-to-end certification of every student feature.
+`202610080001_enforce_user_generation_allowances.sql` integrates default/custom/unlimited user allowances with material and tutor reservations and Admin usage reporting. `ADMIN_REVIEW.md` records the earlier validation scope and expected behavior:
 
-## Admin status
+- Defaults: 5 material and 20 tutor attempts per rolling 24 hours.
+- Custom caps: 1–1000 for each category.
+- Unlimited removes the personal cap but retains ordinary cooldowns and shared app caps.
+- Developer access remains a separate bypass; changing an allowance does not erase attempt history.
+- Successful changes are audited; exact request retries are idempotent and mismatched reuse is rejected.
 
-Admin navigation currently enables **Overview** and **Users**. **AI Control**, **Reports & Feedback**, and **Activity Log** remain disabled placeholders with no corresponding pages in the route inventory.
+These behavior notes and old local test results are not a live Supabase verification. Check the migration state before using the feature as evidence of deployed configuration.
 
-Overview displays platform totals and 24-hour generation-attempt counts. The UI correctly explains attempts can include failed calls after reservation and developer tests; the counts are not model quota remaining.
+## Recommended next steps
 
-Users has name/email search, pagination, a basic profile modal, usage cards, and a Super Admin usage allowance form. The existing UI reports administrator as a single boolean label, so it does not distinguish regular Admin from Super Admin in the user table/modal yet.
+1. **Confirm remaining live migration state** with the user or Supabase migration history, especially `202610080003` and `202610180001`–`202610180009`. Compare dependencies and apply only missing migrations in order.
+2. **Validate account management against a test account** after confirming migrations: ordinary user vs regular Admin vs Super Admin, self/protected targets, suspension expiry, role grant/revoke, audit entries, direct RPC/table paths, and storage behavior. Avoid claiming auth session revocation or invalidation of existing signed URLs.
+3. **Continue AI Control:** if prompt versioning is resumed, test rollback after there are at least two published versions for a tool. Verify route changes and fallback behavior with safe settings. Add usage telemetry and an honest provider quota view. Keep secrets server-side; a new provider still needs server integration and configured credentials.
+4. **Plan account deletion** only after reviewing group ownership, shared snapshots, storage objects, foreign keys, notifications, and audit retention. Limit it to Super Admin and use strong confirmation.
+5. Update this handoff after the next milestone and record which migrations the user confirms applying.
 
-Existing permission foundation in `202610060004_add_admin_management_foundation.sql`:
-
-- Rejects self-management and all Super Admin targets.
-- Regular Admin may only ban/unban ordinary users; cannot manage any admin or perform delete, usage, or role actions.
-- Super Admin may do the whitelisted management actions on eligible users.
-- The guard is private/revoked from clients; management RPCs must call it server-side in SQL and must not trust a browser-supplied actor ID.
-
-## AI usage allowance work completed
-
-`202610080001_enforce_user_generation_allowances.sql` integrates default/custom/unlimited allowance settings into the material and tutor reservations and admin usage display. The user reported the allowance feature is working. Earlier validations recorded in `ADMIN_REVIEW.md` and `HANDOFF` history: TypeScript, targeted ESLint, production build, 63 isolated PGlite SQL assertions, and 18 headless UI assertions passed. These checks are local/mocked, not live Supabase checks.
-
-Behavior:
-
-- Default caps remain 5 material-generation attempts and 20 tutor attempts per rolling 24 hours.
-- Custom caps are 1–1000 for each category.
-- Unlimited removes the personal cap but keeps normal cooldowns and shared app caps.
-- Legacy developer access remains a separate full bypass and is not edited through the user allowance form.
-- Changing an allowance does not delete past attempts. Successful changes are audit logged; same-request retries are checked against the original payload.
-
-Relevant code: `lib/admin-users.ts`, `app/(admin)/admin/users/usage-actions.ts`, `app/(admin)/components/AdminUserProfile.tsx`, `AdminUserUsage.tsx`, and `AdminUserAllowanceForm.tsx`.
-
-## Ban/unban files and constraints
-
-- `202610080002_add_account_suspensions.sql`: private suspension table plus `is_current_account_suspended()` for the current user. User reported it succeeded.
-- `202610080003_add_account_suspension_actions.sql`: protected set/clear function plus atomic audit event. Locally prepared; live application is unconfirmed.
-- `scripts/check-account-suspensions.cjs`: isolated tests for roles, protected/self targets, input validation, RLS, retries, audit records, and rollback.
-- No admin ban/unban controls are wired into `AdminUserProfile.tsx`.
-- Proxy, student layout, and admin helper now check suspension status in local code; live behavior remains unverified.
-- App uses only `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the inspected Supabase server/proxy clients. No service-role key reference was found. Database/RPC policy enforcement is therefore essential; signing out/revoking other sessions may require a carefully configured server-only Supabase Admin API credential later.
-
-Recommended ban implementation sequence:
-
-1. Confirm migration 003 application status. If unapplied, verify dependencies and have the user apply it once.
-2. Validate `202610180001` in isolated PostgreSQL (policy/trigger syntax, all RLS tables, Storage policy), then provide exact apply order and wait for live confirmation.
-3. Audit externally callable SECURITY DEFINER read functions not covered by the admin/group helpers, and review Storage signed/public URL behavior.
-4. Add Admin profile ban/unban controls with required reason, confirmation, busy/error states, safe retry IDs, and refreshed profile/activity log.
-5. Verify regular Admin vs ordinary user and protected/self targets; test active-session navigation, Server Actions, direct table access, direct RPCs, and Storage. Clarify that existing auth sessions/signed URLs are not actively revoked.
-
-Avoid promising that an app-level ban prevents the Supabase project owner from changing or deleting accounts.
-
-## Remaining accepted roadmap
-
-Continue the Users/account-management path in this order:
-
-1. Complete and wire ban/unban enforcement and controls.
-2. Add/revoke **regular Admin** access from Super Admin only. No browser action can create/promote a Super Admin; protect self and all Super Admin accounts.
-3. Add account deletion for Super Admin only after reviewing group ownership, shared material snapshots, storage files, foreign keys, notifications, and audit retention. Use strong confirmation and ensure deleting an account does not unexpectedly erase group-owned work.
-4. Build an Activity Log page with filters/pagination and only the admin-visible audit metadata.
-5. Build Reports & Feedback for concerns users voluntarily submit. Do not give admins access to private learning material, tutor chats, prompts, quiz answers, or private group content.
-6. Build AI Control: provider/model registry with add/disable/remove safety, per-tool routing (strong lesson/explanation model, practice/quiz model, emergency fallback), bounded fallback behavior, versioned prompts with test/publish/rollback, usage telemetry, and honest quota visualization. Models can be switched/managed without hardcoding model IDs. Adding a provider still requires its server integration and secret configuration.
-
-AI currently uses one hardcoded Groq model in `lib/ai/groq.ts` (`openai/gpt-oss-120b`), 30-second timeout, SDK retries disabled. Dynamic model routing, prompt management, actual provider quota metrics, Reports/Feedback, and Activity Log UI are not implemented.
-
-## Privacy and product boundaries
+## Product and privacy boundaries
 
 - LuminaPH serves Junior High, Senior High, College, and independent learners across subjects; supports English, Filipino, and Taglish.
-- No school/curriculum lookup APIs; avoid inventing source claims. Users may provide their own study materials.
-- Admins may see basic account details, aggregate counts, usage metadata, and voluntarily submitted reports. They should not browse private notes, study guide contents, group content, prompts, tutor conversations, or quiz answers.
+- Users may provide their own learning materials. Do not invent school/curriculum source claims.
+- Admins may see basic account details, aggregate counts, usage metadata, activity metadata, and reports users choose to submit. Do not expose private notes, study guides, tutor chats, prompts, quiz answers, or private group content to Admins.
 - Unlimited app allowance does not mean unlimited provider quota.
+- Do not promise that an app-level suspension prevents a Supabase project owner from changing or deleting accounts.
 
 ## Collaboration preferences
 
-- Speak conversational Taglish. User is learning and wants code explained clearly.
-- The user usually prefers **hands-on** for “next/proceed”: give a small step and explain it. They explicitly said “ikaw na gumawa explain mo na lang” for the current ban/unban step, so direct code edits are authorized for that task. This does not automatically authorize building every future roadmap item.
-- Prefer readable JavaScript/TypeScript/SQL with descriptive names, braces, explicit `if/else`, and short Taglish comments. Keep necessary type checks, hooks, and security controls; explain why they exist.
-- Before adding Next.js code, read relevant installed docs under `node_modules/next/dist/docs/` as required in `AGENTS.md`.
-- Migrations are manually applied by the user in Supabase SQL Editor. Never claim an unapplied local migration is live. When asking user to create a migration inside the migrations folder, give the filename only (they have accidentally nested the path before).
-- Preserve the many unrelated working-tree changes. Do not reset/clean/commit them.
-- Actual repo used in recent work: `C:\Users\Acer Nitro V15\lumina-ph-v2`. The IDE sometimes reports `C:\Users\Acer Nitro V15\LuminaPH`; verify before editing because these paths may differ.
-- Never put prior chat passwords or secrets in this file, code, or migrations.
+- Speak conversational Taglish. The user is learning and prefers clear explanations. For “next/proceed,” take a small hands-on step and explain it. The user previously said “ikaw na gumawa explain mo na lang” for the ban/unban task; that authorized work on that task, not every future roadmap item.
+- Prefer readable JavaScript/TypeScript/SQL with descriptive names, braces, explicit conditionals, and short Taglish comments. Retain necessary validation and security checks.
+- Before adding Next.js code, read the relevant installed guide under `node_modules/next/dist/docs/`, as required by `AGENTS.md`.
+- Migrations are manually applied by the user in Supabase SQL Editor. Never claim an unapplied local migration is live. When asking the user to apply a migration, give the filename only (not a nested path).
+- Never reset, clean, or commit the workspace unless explicitly asked. Preserve unrelated user changes.
+- Never put passwords or secrets in this file, code, or migrations.
 
-## Verification and live state
+## Repository and verification snapshot (2026-11-01)
 
-- No Supabase live connection was used by the assistant. Migration application status is only known where the user explicitly reported success.
-- No tests were run during the 2026-10-18 scan/update. Existing test results are listed with their scope above.
-- Many project files have uncommitted modifications and untracked files; this is the current collaboration workspace, not a clean checkout.
+- Workspace: `C:\Users\xenon\LuminaPH-v2`.
+- `git status --short` was empty before the AI Control work began. The local history shows one grafted commit (`e076d62`), so it does not provide a useful detailed change timeline.
+- The project uses Next.js `16.3.5`, React `19.2.8`, TypeScript, Supabase, and Groq; scripts include `dev`, `build`, `start`, and `lint`.
+- Admin route inventory includes overview, users, profile, reports, activity log, and the local AI Control model registry/tool routing UI. No account deletion route was found.
+- AI Control's registry/routing objects were confirmed present via the user's Supabase catalog check on 2026-11-11. The user confirmed applying the prompt versioning migration; all seven v1 prompts passed synthetic previews and were published in the local app, then the user requested restoring code prompts. The assistant removed the seven Supabase publication links via SQL Editor, archived their v1 rows, and verified zero active publications. No migration was applied by the assistant.
+- The initial pass was a repo/status scan, not a line-by-line audit, deployment check, or live security certification. For the local AI Control registry/routing changes, TypeScript and targeted ESLint passed; no tests or live Supabase checks were run.
+- `ADMIN_REVIEW.md` still contains a 2026-10-08 “still pending” list that is stale for role management, Activity Log, and Reports & Feedback. Update it separately if that historical review is still being maintained; its recorded test results remain historical evidence, not a fresh run.

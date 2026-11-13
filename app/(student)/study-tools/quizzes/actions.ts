@@ -3,9 +3,9 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import { generateQuiz, validateQuizQuestions, type QuizQuestion } from "@/lib/ai/quizzes";
-import { STUDY_MODEL } from "@/lib/ai/groq";
 
 export type QuizState = {
   status: "idle" | "error" | "success";
@@ -83,7 +83,7 @@ export async function createQuiz(_previous: QuizState, formData: FormData): Prom
         !learningGoal || learningGoal.length > 1000) {
       return { status: "error", message: "Check your level, subject (1–120 characters), academic details (up to 120), and learning goal (1–1,000)." };
     }
-    if (!process.env.GROQ_API_KEY?.trim()) return { status: "error", message: "Quiz generation is temporarily unavailable." };
+    if (!hasAnyAiProviderKey()) return { status: "error", message: "Quiz generation is temporarily unavailable." };
 
     // Invalid input or inaccessible guides must not consume an AI attempt.
     const { data: allowance, error: allowanceError } = await supabase.rpc("reserve_ai_generation");
@@ -98,8 +98,11 @@ export async function createQuiz(_previous: QuizState, formData: FormData): Prom
     }
 
     let questions: QuizQuestion[];
+    let model = "";
     try {
-      questions = await generateQuiz({ educationLevel, academicDetails, subject, learningGoal, language, questionCount, sourceGuide });
+      const generated = await generateQuiz({ educationLevel, academicDetails, subject, learningGoal, language, questionCount, sourceGuide });
+      questions = generated.questions;
+      model = generated.model;
     } catch (error) {
       const message = error instanceof Groq.APIError && error.status === 429
         ? "The AI provider's free allowance is unavailable. Try again later. This attempt counts toward your limit."
@@ -116,7 +119,7 @@ export async function createQuiz(_previous: QuizState, formData: FormData): Prom
         material_type: "quiz", notes: "", quiz_questions: questions,
         request_details: {
           educationLevel, academicDetails, subject, learningGoal, language, questionCount,
-          provider: "groq", model: STUDY_MODEL,
+          provider: "groq", model,
           sourceStatus: sourceGuide ? "saved_study_guide" : "general_unverified",
           sourceGuide: guideReference ?? null,
         },

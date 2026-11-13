@@ -27,7 +27,7 @@ const navigation = [
     label: "AI Control",
     href: "/admin/ai-control",
     icon: Cpu,
-    available: false,
+    available: true,
   },
   {
     label: "Reports & Feedback",

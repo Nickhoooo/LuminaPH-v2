@@ -1,5 +1,5 @@
 import "server-only";
-import { createGroqClient, STUDY_MODEL } from "./groq";
+import { completeWithAiFallback, createAiClient, mergeAdminPrompt } from "./groq";
 
 export type TutorTurn = {
   question: string;
@@ -103,12 +103,17 @@ export async function generateTutorReply(input: TutorInput): Promise<string> {
 
   messages.push({ role: "user", content: question });
 
-  // Reuse the existing provider, timeout, and no-automatic-retry configuration.
-  const response = await createGroqClient().chat.completions.create({
-    model: STUDY_MODEL,
-    messages,
-    max_completion_tokens: 4096,
-  });
+  // Keep provider-specific credentials and retry behavior server-side.
+  const { result: response } = await completeWithAiFallback("tutor", (model, adminPrompt, provider) =>
+    createAiClient(provider).chat.completions.create({
+      model,
+      messages: [
+        { ...messages[0], content: mergeAdminPrompt(messages[0].content, adminPrompt) },
+        ...messages.slice(1),
+      ],
+      max_completion_tokens: 4096,
+    }),
+  );
 
   const choice = response.choices[0];
   if (!choice || choice.finish_reason !== "stop") {

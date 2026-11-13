@@ -20,6 +20,8 @@ const actionLabels: Record<string, string> = {
   grant_admin: "Granted Admin role",
   revoke_admin: "Removed Admin role",
   update_report: "Updated user report",
+  delete_report: "Deleted resolved report",
+  update_ai_settings: "Changed AI model settings",
 };
 
 const buttonStyle =

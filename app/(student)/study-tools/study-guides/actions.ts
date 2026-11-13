@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { generateStudyGuide } from "@/lib/ai/study-guide";
-import { STUDY_MODEL } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 
 export type StudyGuideState = {
@@ -107,7 +107,7 @@ export async function createStudyGuide(
     }
 
     // Missing server configuration should not consume a student's allowance.
-    if (!process.env.GROQ_API_KEY?.trim()) {
+    if (!hasAnyAiProviderKey()) {
       return {
         status: "error",
         message: "Study guide generation is temporarily unavailable. Please try again later.",
@@ -216,9 +216,10 @@ export async function createStudyGuide(
     }
 
     let content: string;
+    let model = "";
 
     try {
-      content = await generateStudyGuide({
+      const generated = await generateStudyGuide({
         educationLevel,
         academicDetails,
         subject,
@@ -226,6 +227,8 @@ export async function createStudyGuide(
         language,
         sourceNote,
       });
+      content = generated.content;
+      model = generated.model;
     } catch (error) {
       if (error instanceof Groq.APIError && error.status === 429) {
         return {
@@ -265,7 +268,7 @@ export async function createStudyGuide(
           learningGoal,
           language,
           provider: "groq",
-          model: STUDY_MODEL,
+          model,
           sourceStatus,
           sourceNote: noteReference ?? null,
         },

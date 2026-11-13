@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import { generateStudyText } from "@/lib/ai/groq";
 
@@ -74,7 +75,7 @@ export async function generateLessonContent(
       return { status: "success", message: "Your saved lesson is ready.", studySetId: guide.id };
     }
 
-    if (!process.env.GROQ_API_KEY?.trim()) {
+    if (!hasAnyAiProviderKey()) {
       return { status: "error", message: "Lesson generation is temporarily unavailable." };
     }
 
@@ -121,7 +122,7 @@ export async function generateLessonContent(
         },
       });
 
-      content = await generateStudyText(prompt);
+      content = await generateStudyText(prompt, "learning_path");
       if (!content.trim() || content.length > 20000) {
         throw new Error("Lesson content is empty or too long.");
       }

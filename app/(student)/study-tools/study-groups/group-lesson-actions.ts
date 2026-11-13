@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import Groq from "groq-sdk";
+import { hasAnyAiProviderKey } from "@/lib/ai/groq";
 import { createClient } from "@/lib/supabase/server";
 import { generateStudyText } from "@/lib/ai/groq";
 
@@ -116,7 +117,7 @@ export async function generateGroupLesson(
       // The owner may retry a validated draft. It is not proof of AI provenance.
       content = savedDraft.trim();
     } else if (mode === "generate") {
-      if (!process.env.GROQ_API_KEY?.trim()) {
+      if (!hasAnyAiProviderKey()) {
         return {
           status: "error",
           message: "Lesson generation is temporarily unavailable.",
@@ -171,6 +172,7 @@ export async function generateGroupLesson(
               lessonNumber: lesson.position,
             },
           }),
+          "group_lesson",
         );
         if (!generated.trim() || generated.trim().length > 20000)
           throw new Error("Invalid content.");
