@@ -2,6 +2,21 @@
 
 These files are reviewed source copies. Saving them locally does not update the hosted Supabase project.
 
+## Signup confirmation email setup
+
+In the Supabase project used by Lumina PH:
+
+1. Open Authentication > Email Templates > Confirm signup.
+2. Set the subject to: Confirm your Lumina PH account.
+3. Paste the complete contents of confirmation.html into the email body and save.
+4. Under Authentication > URL Configuration, set Site URL to the stable production origin, not a Vercel preview/deployment URL.
+5. Add the production callback URL `https://<production-domain>/auth/confirm` to the redirect URL allow list. Add `http://localhost:3000/auth/confirm` only if you also test signup locally.
+6. In Vercel, set `NEXT_PUBLIC_SITE_URL` to the stable production origin if it differs from `VERCEL_PROJECT_PRODUCTION_URL`, then redeploy.
+
+The signup action passes `/auth/confirm` as `emailRedirectTo`. The confirmation template sends the token hash to that route. A GET only shows a confirmation button; the one-time token is verified after the user submits it, which prevents email link prefetchers from consuming it before the user clicks.
+
+Request a fresh confirmation email after updating the template and deployment. Older confirmation links may already be expired or point to an unavailable deployment.
+
 In the lumina-ph-v2-dev dashboard:
 
 1. Open Authentication > Email Templates (or Email > Templates) > Reset password.

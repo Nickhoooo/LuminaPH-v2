@@ -5,6 +5,7 @@ import { MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import Sidebar from "./_components/Sidebar";
 import DashboardHeader from "./_components/DashboardHeader";
+import MobileBottomNav from "./_components/MobileBottomNav";
 import StudyPreferencesProvider from "@/components/study/StudyPreferencesProvider";
 import { readStudyPreferences } from "@/lib/study-preferences";
 import { defaultAppSettings } from "@/lib/app-settings";
@@ -96,7 +97,7 @@ export default async function StudentLayout({
       </a>
 
       {/* LEFT: fixed sidebar. Its width matches the content margin below. */}
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-68 flex-col overflow-y-auto border-r border-[#e8ece4] dark:border-stone-700 bg-white dark:bg-stone-900 px-5 pb-5 pt-8 lg:flex">
+      <aside className="student-sidebar fixed inset-y-0 left-0 z-20 hidden w-68 flex-col overflow-y-auto overflow-x-hidden border-r border-[#e8ece4] bg-white px-5 pb-5 pt-8 dark:border-stone-700 dark:bg-stone-900 lg:flex">
         <Sidebar groupNavigation={groupNavigation} />
       </aside>
 
@@ -106,14 +107,13 @@ export default async function StudentLayout({
           avatarUrl={profileImages.avatarUrl}
           displayName={displayName}
           email={user.email ?? ""}
-          groupNavigation={groupNavigation}
           unreadCount={
             notificationResult.error ? null : (notificationResult.count ?? 0)
           }
         />
         <main
           id="student-content"
-          className="w-full min-w-0 px-4 pb-8 pt-6 md:px-6 xl:px-8"
+          className="w-full min-w-0 px-4 pb-28 pt-6 md:px-6 md:pt-8 lg:pb-8 xl:px-8"
         >
           {settingsResult.error && (
             <p
@@ -141,10 +141,11 @@ export default async function StudentLayout({
       <Link
         href="/study-tools/ai-tutor"
         aria-label="Open AI Tutor"
-        className="fixed bottom-4 right-4 z-30 grid size-13 place-items-center rounded-full border-4 border-[#f8f9f5] dark:border-stone-700 bg-emerald-800 text-white shadow-lg transition-transform hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none sm:bottom-6 sm:right-7"
+        className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-4 z-30 grid size-13 place-items-center rounded-full border-4 border-[#f8f9f5] dark:border-stone-700 bg-emerald-800 text-white shadow-lg transition-transform hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none lg:bottom-6 lg:right-7"
       >
         <MessageCircle size={24} />
       </Link>
+      <MobileBottomNav />
     </AppearanceProvider>
   );
 }

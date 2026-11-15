@@ -58,7 +58,7 @@ export default function FlashcardForm({ sourceNote, sourceGuide }: { sourceNote?
     <section className="w-full min-w-0 space-y-6">
       <header><h1 className="font-serif text-3xl sm:text-4xl">Flashcards</h1><p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-300">Start with a topic or turn a saved study guide into recall practice. Personal notes can also be opened from your Library.</p></header>
       {editing && (
-        <form action={formAction} aria-busy={pending} className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+        <form action={formAction} aria-busy={pending} className="student-panel space-y-5 p-5 sm:p-7">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 ref={formHeading} tabIndex={-1} className="text-xl font-semibold outline-none">Deck details</h2>
             {result?.deck && <button type="button" disabled={pending} onClick={() => setEditing(false)} className="text-sm text-emerald-800 dark:text-emerald-200 underline disabled:opacity-50">Back to previous deck</button>}

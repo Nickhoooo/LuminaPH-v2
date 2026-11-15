@@ -20,7 +20,7 @@ export default function AnnouncementForm({ requestId }: { requestId: string }) {
       </p>
     );
   return (
-    <details className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+    <details className="student-panel p-5 sm:p-7">
       <summary className="cursor-pointer font-semibold">
         Admin: publish an announcement
       </summary>

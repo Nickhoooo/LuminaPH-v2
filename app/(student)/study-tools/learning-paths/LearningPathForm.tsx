@@ -29,7 +29,7 @@ export default function LearningPathForm() {
   return <section className="space-y-5">
     {!state.outline && <form action={action} 
                             aria-busy={pending} 
-                            className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 sm:p-7">
+                            className="student-panel space-y-5 p-5 sm:p-7">
 
       <div>
         <h2 className="text-xl font-semibold">Build your study plan</h2>
@@ -117,7 +117,7 @@ export default function LearningPathForm() {
     </form>}
 
     <p role="status" className={state.status === "error" ? "text-sm text-red-700 dark:text-red-200" : "text-sm text-emerald-800 dark:text-emerald-200"}>{state.message}
-    </p> {state.outline && <section className="space-y-4 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+    </p> {state.outline && <section className="student-panel space-y-4 p-5 sm:p-7">
 
       <h2 ref={heading} tabIndex={-1} className="break-words text-2xl font-semibold outline-none">{state.outline.title}</h2>
 

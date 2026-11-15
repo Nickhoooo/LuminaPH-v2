@@ -30,7 +30,7 @@ export default async function FeedbackPage() {
 
       <div className="grid items-start gap-6 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <ReportForm requestId={randomUUID()} />
-        <section className="rounded-2xl border border-stone-200 bg-white p-5 dark:border-stone-700 dark:bg-stone-900 md:p-6">
+        <section className="student-panel p-5 sm:p-7">
           <h2 className="text-lg font-semibold">Your reports</h2>
           {error ? (
             <p role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">Could not load your report history. The report migration may still need to be applied.</p>

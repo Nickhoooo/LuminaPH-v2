@@ -6,37 +6,37 @@ const studyTools = [
     id: "guides",
     name: "Study Guides",
     description: "Make complicated topics easier to understand.",
-    image: "/images/study-tools/guides.jpg",
+    image: "/images/dashboard-tools/guides.jpg",
   },
   {
     id: "flashcards",
     name: "Flashcards",
     description: "A little recall. A little repetition. More confidence.",
-    image: "/images/study-tools/flashcards.jpg",
+    image: "/images/dashboard-tools/flashcards.jpg",
   },
   {
     id: "quizzes",
     name: "Practice Quizzes",
     description: "Find out what you know—and what to review next.",
-    image: "/images/study-tools/quizzes.jpg",
+    image: "/images/dashboard-tools/quizzes.jpg",
   },
   {
     id: "paths",
     name: "Learning Paths",
     description: "Give your next study session a clear direction.",
-    image: "/images/study-tools/paths.jpg",
+    image: "/images/dashboard-tools/paths.jpg",
   },
   {
     id: "tutor",
     name: "AI Study Tutor",
     description: "Stay curious. Ask until it makes sense.",
-    image: "/images/study-tools/tutor.jpg",
+    image: "/images/dashboard-tools/tutor.jpg",
   },
   {
     id: "groups",
     name: "Study Groups",
     description: "Bring your notes. Bring your classmates.",
-    image: "/images/study-tools/groups.jpg",
+    image: "/images/dashboard-tools/groups.jpg",
   },
 ];
 

@@ -69,7 +69,7 @@ export default function AppearanceProvider({
         data-app-theme={theme}
         data-reading-size={settings.reading_size}
         data-reduce-motion={settings.reduce_motion}
-        className="student-space min-h-dvh bg-[#f8f9f5] font-sans text-[#233d34] scheme-light dark:bg-stone-950 dark:text-stone-200 dark:scheme-dark"
+        className="student-space min-h-dvh bg-[var(--lumina-paper)] font-sans text-[var(--lumina-ink)] scheme-light dark:bg-stone-950 dark:text-stone-200 dark:scheme-dark"
       >
         {children}
       </div>

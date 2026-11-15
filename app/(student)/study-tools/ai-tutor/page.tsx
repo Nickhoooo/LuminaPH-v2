@@ -74,7 +74,7 @@ export default async function AiTutorPage({ searchParams }: PageProps) {
         </header>
         <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0"><TutorChat key={`${guide.id}-${currentPage}`} guide={guide} savedTurns={savedTurns} historyPage={currentPage} /></div>
-        <aside className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5 xl:sticky xl:top-24 dark:border-stone-700 dark:bg-stone-900">
+        <aside className="student-panel space-y-4 p-5 xl:sticky xl:top-24">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">Current guide</h2>
           <p className="break-words font-semibold">{guide.title}</p>
           <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">Ask for examples, simpler explanations, or practice questions about this guide.</p>
@@ -107,10 +107,10 @@ export default async function AiTutorPage({ searchParams }: PageProps) {
       {error ? <p role="alert">Could not load your guides. Please refresh.</p> : (
         <>
           {!guides?.length && <p>No guides on this page. <Link href="/study-tools/study-guides" className="text-emerald-800 dark:text-emerald-200 underline">Create a study guide</Link> to start.</p>}
-          <ul className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+          <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,17rem),1fr))] gap-4">
             {guides?.map(guide => (
               <li key={guide.id}>
-                <Link href={"/study-tools/ai-tutor?guide=" + guide.id} className="block rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 hover:border-emerald-700">
+                <Link href={"/study-tools/ai-tutor?guide=" + guide.id} className="student-tool-card block border p-5 transition-colors hover:border-emerald-700">
                   <h2 className="break-words font-semibold">{guide.title}</h2>
                   <p className="mt-2 text-sm text-stone-500 dark:text-stone-400">{guide.subject}</p>
                   <span className="mt-3 block text-sm font-medium text-emerald-800 dark:text-emerald-200">Open conversation →</span>

@@ -36,7 +36,8 @@ html:has(.student-space[data-reduce-motion="true"]) { scroll-behavior: auto; }
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -50,25 +51,25 @@ html:has(.student-space[data-reduce-motion="true"]) { scroll-behavior: auto; }
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 /* Shared landing-page colors keep every section in sync with the navbar switch. */
 .landing-theme {
-  --landing-bg: #ffffff;
-  --landing-text: #0f172a;
-  --landing-muted: #475569;
-  --landing-subtle: #64748b;
-  --landing-accent: #047857;
-  --landing-nav: #ffffff;
-  --landing-brand: #0f172a;
-  --landing-brand-accent: #064e3b;
-  --landing-section: #f5fdf9;
+  --landing-bg: #f5f7f2;
+  --landing-text: #20342c;
+  --landing-muted: #52665a;
+  --landing-subtle: #6d7f72;
+  --landing-accent: #14765a;
+  --landing-nav: rgb(255 255 255 / 90%);
+  --landing-brand: #20342c;
+  --landing-brand-accent: #0c4a3a;
+  --landing-section: #eaf0e7;
   --landing-card: #ffffff;
-  --landing-border: #d1e6db;
-  --landing-badge-bg: #ecfdf5;
-  --landing-badge-text: #047857;
-  --landing-switch: #64748b;
+  --landing-border: #d7e2d6;
+  --landing-badge-bg: #e3ede3;
+  --landing-badge-text: #0c4a3a;
+  --landing-switch: #14765a;
   background-color: var(--landing-bg);
   color: var(--landing-text);
   color-scheme: light;
@@ -258,3 +259,91 @@ body {
 
 /* Keep anchors visible below the sticky app header. */
 .student-space [id] { scroll-margin-top: 6rem; }
+
+
+:root {
+  --lumina-pine: #0c4a3a;
+  --lumina-leaf: #14765a;
+  --lumina-sage: #c4d5c4;
+  --lumina-paper: #f5f7f2;
+  --lumina-ink: #20342c;
+  --lumina-glass: rgb(255 255 255 / 88%);
+}
+
+.student-sidebar {
+  scrollbar-width: none;
+  overscroll-behavior-y: contain;
+}
+.student-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+
+.landing-theme :is(h1, h2, h3),
+.student-space :is(h1, h2, h3):not(.student-editorial-heading) {
+  font-family: var(--font-manrope), sans-serif;
+}
+
+
+.student-panel,
+.student-tool-card {
+  border-color: #d7e2d6;
+  border-radius: 1.25rem;
+  background-color: rgb(255 255 255 / 88%);
+  box-shadow: 0 1px 0 rgb(12 74 58 / 3%);
+}
+
+[data-app-theme="dark"] .student-panel,
+[data-app-theme="dark"] .student-tool-card {
+  border-color: #3f4e42;
+  background-color: rgb(23 30 25 / 94%);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-app-theme="system"] .student-panel,
+  [data-app-theme="system"] .student-tool-card {
+    border-color: #3f4e42;
+    background-color: rgb(23 30 25 / 94%);
+  }
+}
+
+.student-space :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]), select, textarea) {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid #cbd8cb;
+  border-radius: 0.8rem;
+  background-color: rgb(255 255 255 / 92%);
+  color: #20342c;
+  padding: 0.75rem 0.875rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.student-space :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea):focus-visible {
+  border-color: #14765a;
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(20 118 90 / 16%);
+}
+
+[data-app-theme="dark"] .student-space :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) {
+  border-color: #4b5a4e;
+  background-color: #171e19;
+  color: #edf4ed;
+}
+
+[data-app-theme="dark"] .student-space :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea):focus-visible {
+  border-color: #71b58d;
+  box-shadow: 0 0 0 3px rgb(113 181 141 / 18%);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-app-theme="system"] .student-space :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) {
+    border-color: #4b5a4e;
+    background-color: #171e19;
+    color: #edf4ed;
+  }
+
+  [data-app-theme="system"] .student-space :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea):focus-visible {
+    border-color: #71b58d;
+    box-shadow: 0 0 0 3px rgb(113 181 141 / 18%);
+  }
+}

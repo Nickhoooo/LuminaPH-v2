@@ -29,7 +29,7 @@ export default async function QuizzesPage({ searchParams }: { searchParams: Prom
     <h1 className="text-3xl font-semibold">Choose a guide for your quiz</h1>
     {error ? <p role="alert">Could not load guides. Please refresh to try again.</p> : <>
       {!data?.length && <p>No guides on this page. <Link href="/study-tools/study-guides" className="underline">Create a study guide</Link></p>}
-      <ul className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">{data?.map(item => <li key={item.id}><Link href={"/study-tools/quizzes?guide=" + item.id} className="block rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 hover:border-emerald-700"><span className="font-medium">{item.title}</span><span className="mt-2 block text-sm text-stone-500 dark:text-stone-400">{item.subject}</span></Link></li>)}</ul>
+      <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,17rem),1fr))] gap-4">{data?.map(item => <li key={item.id}><Link href={"/study-tools/quizzes?guide=" + item.id} className="block rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 hover:border-emerald-700"><span className="font-medium">{item.title}</span><span className="mt-2 block text-sm text-stone-500 dark:text-stone-400">{item.subject}</span></Link></li>)}</ul>
       <nav aria-label="Guide pages" className="flex gap-4 text-sm text-emerald-800 dark:text-emerald-200">{current > 1 && <Link href={"?mode=guide&page=" + (current - 1)}>Previous</Link>}{(count ?? 0) > current * 20 && <Link href={"?mode=guide&page=" + (current + 1)}>Next</Link>}</nav>
     </>}
   </section>;

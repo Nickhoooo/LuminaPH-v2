@@ -70,7 +70,7 @@ export default function ProfileForm({
   }
   return (
     <div className="space-y-6">
-      <header className="overflow-hidden rounded-3xl border border-[#e3e8dd] dark:border-stone-700 bg-white dark:bg-stone-900">
+      <header className="student-panel overflow-hidden">
         <ProfilePhoto src={coverUrl} name={savedProfile.full_name} cover />
         <div className="px-5 pb-7 sm:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -162,7 +162,7 @@ export default function ProfileForm({
         <form
           action={action}
           aria-busy={pending}
-          className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 sm:p-7"
+          className="student-panel space-y-5 p-5 sm:p-7"
         >
           <div>
             <h3 className="text-lg font-semibold">Edit your profile</h3>

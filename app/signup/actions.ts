@@ -7,6 +7,24 @@ export type SignupState = {
   message: string;
 };
 
+function getPublicSiteOrigin() {
+  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const productionDomain = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  const candidate = configuredUrl
+    || (productionDomain ? `https://${productionDomain}` : null)
+    || (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : null);
+
+  if (!candidate) return null;
+
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== "https:" && url.hostname !== "localhost") return null;
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
 export async function signup(
   _previousState: SignupState,
   formData: FormData,
@@ -52,6 +70,14 @@ export async function signup(
     };
   }
 
+  const siteOrigin = getPublicSiteOrigin();
+  if (!siteOrigin) {
+    return {
+      status: "error",
+      message: "Email confirmation is not configured for this site. Please contact support.",
+    };
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signUp({
@@ -59,6 +85,7 @@ export async function signup(
     password,
     options: {
       data: { full_name: displayNameInput.trim() },
+      emailRedirectTo: new URL("/auth/confirm", siteOrigin).toString(),
     },
   });
 

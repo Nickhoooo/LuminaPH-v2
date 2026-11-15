@@ -81,7 +81,7 @@ export default function TutorChat({ guide, savedTurns, historyPage }: TutorChatP
 
   return (
     <section className="space-y-5">
-      <div className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5">
+      <div className="student-panel p-5">
         <p className="text-xs font-medium uppercase tracking-wide text-stone-500 dark:text-stone-400">Studying together</p>
         <h2 className="mt-2 break-words text-xl font-semibold">{guide.title}</h2>
         <Link href={"/library/" + guide.id} className="mt-3 inline-flex rounded-lg border border-emerald-800/25 px-4 py-2 text-sm font-medium text-emerald-800 dark:text-emerald-200 hover:bg-emerald-50 dark:hover:bg-emerald-950">
@@ -102,7 +102,7 @@ export default function TutorChat({ guide, savedTurns, historyPage }: TutorChatP
               <p className="mb-2 text-xs font-semibold">You</p>
               <p className="whitespace-pre-wrap break-words text-sm leading-6">{turn.question}</p>
             </div>
-            <div className="mr-4 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 sm:mr-10">
+            <div className="student-panel mr-4 p-5 sm:mr-10">
               <p className="mb-3 text-xs font-semibold text-emerald-800 dark:text-emerald-200">LuminaPH Tutor</p>
               <StudyContent content={turn.answer} />
               <p className="mt-3 text-xs text-stone-500 dark:text-stone-400">{turn.saved ? "Saved to this conversation" : "Save not confirmed — keep a copy"}</p>
@@ -134,7 +134,7 @@ export default function TutorChat({ guide, savedTurns, historyPage }: TutorChatP
       )}
 
       {isLatestPage && !unsavedReply && (
-        <form action={action} aria-busy={pending} className="space-y-4 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5">
+        <form action={action} aria-busy={pending} className="student-panel space-y-4 p-5">
           <input type="hidden" name="studySetId" value={guide.id} />
           <fieldset disabled={pending} className="space-y-4">
             <legend className="sr-only">Ask about this lesson</legend>

@@ -92,11 +92,11 @@ export default async function NotificationsPage({
           Could not load notifications. Please refresh.
         </p>
       ) : !notifications?.length ? (
-        <p className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-8 text-stone-500 dark:text-stone-400">
+        <p className="student-panel p-8 text-stone-500 dark:text-stone-400">
           {unreadOnly ? "You’re all caught up." : "No notifications yet."}
         </p>
       ) : (
-        <ul className="grid items-start gap-4 xl:grid-cols-2">
+        <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] items-start gap-4">
           {notifications.map((item) => (
             <li
               key={item.id}

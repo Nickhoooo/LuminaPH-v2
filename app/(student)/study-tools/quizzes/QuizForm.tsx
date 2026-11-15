@@ -22,7 +22,7 @@ export default function QuizForm({ sourceGuide }: { sourceGuide?: { id: string; 
 
   return <section className="w-full min-w-0 space-y-6">
     <header><h1 className="text-3xl font-semibold">Quizzes</h1><p className="mt-2 text-sm text-stone-600 dark:text-stone-300">Practice with multiple-choice questions, then review your score and explanations.</p></header>
-    {!state.quiz && <form action={action} aria-busy={pending} className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+    {!state.quiz && <form action={action} aria-busy={pending} className="student-panel space-y-5 p-5 sm:p-7">
       {!pending && <nav aria-label="Quiz source" className="grid gap-3 sm:grid-cols-2">
         <Link href="/study-tools/quizzes" aria-current={!sourceGuide ? "page" : undefined} className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-800/25 bg-white dark:bg-stone-900 px-4 py-3 text-sm font-medium text-emerald-800 dark:text-emerald-200 transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-950 aria-[current=page]:border-emerald-800 aria-[current=page]:bg-emerald-800 aria-[current=page]:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800 motion-reduce:transition-none"><PencilLine size={18} aria-hidden="true" className="shrink-0" />Start with a topic</Link>
         <Link href="/study-tools/quizzes?mode=guide" aria-current={sourceGuide ? "page" : undefined} className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-800/25 bg-white dark:bg-stone-900 px-4 py-3 text-sm font-medium text-emerald-800 dark:text-emerald-200 transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-950 aria-[current=page]:border-emerald-800 aria-[current=page]:bg-emerald-800 aria-[current=page]:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800 motion-reduce:transition-none"><BookOpen size={18} aria-hidden="true" className="shrink-0" />Use a saved study guide</Link>
@@ -44,7 +44,7 @@ export default function QuizForm({ sourceGuide }: { sourceGuide?: { id: string; 
       <p className="text-xs leading-6 text-stone-500 dark:text-stone-400">By default, AI study tools share 5 generation attempts per 24 hours, at least 60 seconds apart. Failed AI requests count. Answering or retaking a saved quiz uses no AI attempts.</p>
       <button disabled={pending} className={button + " inline-flex items-center gap-2"}>{pending && <LoaderCircle size={17} aria-hidden="true" className="animate-spin motion-reduce:animate-none" />}{pending ? "Generating…" : "Generate quiz"}</button>
     </form>}
-    <p role="status" className={state.status === "error" ? "text-sm text-red-700 dark:text-red-200" : "text-sm text-emerald-800 dark:text-emerald-200"}>{state.message}</p>
+    <p role={state.status === "error" ? "alert" : "status"} aria-live={state.status === "error" ? "assertive" : "polite"} className={state.status === "error" ? "text-sm text-red-700 dark:text-red-200" : "text-sm text-emerald-800 dark:text-emerald-200"}>{state.message}</p>
     {state.quiz && <>
       <h2 ref={heading} tabIndex={-1} className="text-2xl font-semibold outline-none">{state.quiz.title}</h2>
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">

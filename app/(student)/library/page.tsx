@@ -109,7 +109,7 @@ export default async function LibraryPage({
           <span className="text-sm text-stone-500 dark:text-stone-400">{count ?? 0} saved</span>
         </div>
         {materials && materials.length > 0 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
             {materials.map((material) => {
               let label = "Personal notes";
               let Icon = FileText;
@@ -128,7 +128,7 @@ export default async function LibraryPage({
               return (
                 <article
                   key={material.id}
-                  className="flex flex-col rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5"
+                  className="student-panel flex flex-col p-5 sm:p-6"
                 >
                   <Link
                     href={`/library/${material.id}`}
@@ -172,7 +172,7 @@ export default async function LibraryPage({
           </div>
         )}
         {(!materials || materials.length === 0) && (
-          <div className="rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 p-8 text-center">
+          <div className="student-panel border-dashed p-8 text-center">
             <BookOpen
               className="mx-auto text-emerald-700 dark:text-emerald-200"
               size={30}
@@ -216,7 +216,7 @@ export default async function LibraryPage({
         )}
       </section>
 
-      <details className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5">
+      <details className="student-panel p-5 sm:p-6">
         <summary className="cursor-pointer font-medium">
           Add personal notes
         </summary>

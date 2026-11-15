@@ -108,7 +108,7 @@ export default function NotificationCard({
       className={
         compact
           ? `px-5 py-4 ${isRead ? "" : "border-l-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30"}`
-          : `rounded-2xl border bg-white p-5 dark:bg-stone-900 ${isRead ? "border-stone-200 dark:border-stone-700" : "border-emerald-500"}`
+          : `student-panel border p-5 ${isRead ? "border-stone-200 dark:border-stone-700" : "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40"}`
       }
     >
       <button

@@ -10,7 +10,7 @@ export default function ReportForm({ requestId }: { requestId: string }) {
   const [state, action, pending] = useActionState(submitReport, initialState);
 
   return (
-    <form action={action} aria-busy={pending} className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5 dark:border-stone-700 dark:bg-stone-900 md:p-6">
+    <form action={action} aria-busy={pending} className="student-panel space-y-4 p-5 sm:p-7">
       <input type="hidden" name="requestId" value={requestId} />
       <h2 className="text-lg font-semibold">Send feedback</h2>
       <p className="text-sm text-stone-600 dark:text-stone-300">Please do not include passwords or other sensitive information.</p>

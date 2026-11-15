@@ -18,7 +18,7 @@ export default function StudySetForm() {
     <form
       action={formAction}
       aria-busy={pending}
-      className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6"
+      className="student-panel space-y-5 p-5 sm:p-7"
     >
       <h2 className="text-xl font-semibold">Create a study set</h2>
 

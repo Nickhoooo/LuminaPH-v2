@@ -38,7 +38,7 @@ export default async function SettingsPage() {
         ) : (
           <SettingsForm settings={data ?? defaultAppSettings} />
         )}
-        <section className="2xl:sticky 2xl:top-24 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+        <section className="student-panel p-5 sm:p-7 2xl:sticky 2xl:top-24">
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <KeyRound size={20} /> Password
           </h2>

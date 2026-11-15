@@ -120,7 +120,7 @@ export default function NotificationBell({
         <section
           id={panelId}
           aria-label="Notifications"
-          className="fixed right-4 top-20 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-stone-200 bg-white text-stone-900 shadow-xl sm:absolute sm:right-0 sm:top-16 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+          className="fixed right-4 top-20 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-white/70 bg-white/92 text-stone-900 shadow-xl backdrop-blur-xl sm:absolute sm:right-0 sm:top-16 dark:border-white/10 dark:bg-stone-900/92 dark:text-stone-100"
         >
           <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4 dark:border-stone-800">
             <div>

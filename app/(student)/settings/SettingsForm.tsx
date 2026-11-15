@@ -35,7 +35,7 @@ export default function SettingsForm({ settings }: { settings: AppSettings }) {
   const appearanceChanged =
     theme !== settings.theme || accent !== settings.accent_color;
   const card =
-    "space-y-4 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6";
+    "student-panel space-y-4 p-5 sm:p-7";
   const select =
     "mt-2 block w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-3 text-sm";
   return (

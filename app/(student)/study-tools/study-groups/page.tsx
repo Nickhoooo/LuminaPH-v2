@@ -49,6 +49,15 @@ export default async function StudyGroupsPage({
     (groups ?? []).map((group) => group.avatar_path),
   );
   const totalPages = Math.max(1, Math.ceil(totalGroups / pageSize));
+  const visibleGroupCount = groups?.length ?? 0;
+  const groupGridClass =
+    visibleGroupCount === 1
+      ? "grid max-w-2xl gap-5"
+      : visibleGroupCount === 2
+        ? "grid gap-5 sm:grid-cols-2"
+        : visibleGroupCount === 3 || visibleGroupCount === 5 || visibleGroupCount === 6 || visibleGroupCount === 9 || visibleGroupCount === 15 || visibleGroupCount === 18
+          ? "grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+          : "grid gap-5 sm:grid-cols-2 xl:grid-cols-4";
   // A group may have been removed since this page was bookmarked.
   if (!groupsError && page > totalPages) {
     redirect(`/study-tools/study-groups?page=${totalPages}#my-groups`);
@@ -234,7 +243,7 @@ export default async function StudyGroupsPage({
                 </div>
               </div>
             ) : (
-              <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              <ul className={groupGridClass}>
                 {groups.map((group) => {
                   const isOwner = group.owner_id === authData.user.id;
 

@@ -11,7 +11,17 @@ Add your images here, then update `image` in `app/(student)/study-tools/_compone
 | AI Tutor | tutor.jpg | /images/dashboard-tools/tutor.jpg |
 | Study Groups | groups.jpg | /images/dashboard-tools/groups.jpg |
 
-Leave image as an empty string to show the placeholder. JPG, PNG, or WebP
-work. Landscape images around 900 x 600 pixels are a good starting point.
-Images crop to fill the card, so keep the main subject near the center.
-The card title provides the accessible name; the image is decorative.
+The current local assets are free Unsplash photos used under the Unsplash
+License. Source and creator credits:
+
+| File | Photo | Creator | Source |
+| --- | --- | --- | --- |
+| guides.jpg | Desk with open book, laptop, and study materials | Yen Vu | https://unsplash.com/photos/desk-with-open-book-laptop-and-study-materials-HNjWq8WPyoY |
+| flashcards.jpg | A white paper on a white surface | Kelsy Gagnebin | https://unsplash.com/photos/a-white-paper-on-a-white-surface-kZ6UYXwMMD8 |
+| quizzes.jpg | Students attentively taking notes in a lecture hall | Vitaly Gariev | https://unsplash.com/photos/students-attentively-taking-notes-in-a-lecture-hall-NKr9f2t8Lgk |
+| paths.jpg | An open notebook filled with handwritten text | Yen Vu | https://unsplash.com/photos/an-open-notebook-filled-with-handwritten-text-3NXtW3eXI2k |
+| tutor.jpg | Young boy learning on a laptop at a desk | Vitaly Gariev | https://unsplash.com/photos/young-boy-learning-on-a-laptop-at-a-desk-5jeHKPNLdLY |
+| groups.jpg | Students talking and studying in a lecture hall | Vitaly Gariev | https://unsplash.com/photos/students-talking-and-studying-in-a-lecture-hall-wAgfqXpYqug |
+
+Landscape JPG, PNG, or WebP images work. Images crop to fill the card. The
+card title provides the accessible name; the image is decorative.

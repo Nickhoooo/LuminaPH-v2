@@ -129,7 +129,7 @@ export default function StudyGuideForm({
       </header>
 
       {isEditing && (
-      <form action={formAction} aria-busy={pending} className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+      <form action={formAction} aria-busy={pending} className="student-panel space-y-5 p-5 sm:p-7">
         {sourceNote && (
           <div className="space-y-2 rounded-xl bg-emerald-50 dark:bg-emerald-950 p-4">
             <input type="hidden" name="sourceNoteId" value={sourceNote.id} />
@@ -273,7 +273,7 @@ export default function StudyGuideForm({
       </p>
 
       {!isEditing && displayedResult?.guide && (
-        <section aria-labelledby="generated-guide-title" className="space-y-5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6">
+        <section aria-labelledby="generated-guide-title" className="student-panel space-y-5 p-5 sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-stone-500 dark:text-stone-400">Latest generated guide</p>

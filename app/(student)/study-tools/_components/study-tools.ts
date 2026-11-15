@@ -16,7 +16,7 @@ export const studyTools = [
     description: "Make sense of a topic, one idea at a time.",
     label: "Understand",
     icon: BookOpen,
-    image: "",
+    image: "/images/dashboard-tools/guides.jpg",
     background: "bg-[#dfe8d7] dark:bg-stone-800",
   },
   {
@@ -26,7 +26,7 @@ export const studyTools = [
     description: "A little recall. A stronger memory.",
     label: "Remember",
     icon: Layers,
-    image: "",
+    image: "/images/dashboard-tools/flashcards.jpg",
     background: "bg-[#eee6d5] dark:bg-stone-800",
   },
   {
@@ -36,7 +36,7 @@ export const studyTools = [
     description: "Find out what you know and what to revisit.",
     label: "Practice",
     icon: ClipboardCheck,
-    image: "",
+    image: "/images/dashboard-tools/quizzes.jpg",
     background: "bg-[#e6e3ee] dark:bg-stone-800",
   },
   {
@@ -46,7 +46,7 @@ export const studyTools = [
     description: "Give your next learning goal a direction.",
     label: "Build a habit",
     icon: Route,
-    image: "",
+    image: "/images/dashboard-tools/paths.jpg",
     background: "bg-[#dce7e9] dark:bg-stone-800",
   },
   {
@@ -56,7 +56,7 @@ export const studyTools = [
     description: "Work through the why behind a question.",
     label: "Ask & learn",
     icon: Sparkles,
-    image: "",
+    image: "/images/dashboard-tools/tutor.jpg",
     background: "bg-[#eddfdf] dark:bg-stone-800",
   },
 ] as const;
