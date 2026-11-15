@@ -5,10 +5,22 @@ import {
   Route,
   Sparkles,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+type StudyTool = {
+  id: string;
+  href: string;
+  name: string;
+  description: string;
+  label: string;
+  icon: LucideIcon;
+  image: string;
+  background: string;
+};
 
 // Put your images in public/images/dashboard-tools, then set image below.
 // Example: image: "/images/dashboard-tools/flashcards.jpg"
-export const studyTools = [
+export const studyTools: StudyTool[] = [
   {
     id: "guides",
     href: "/study-tools/study-guides",
@@ -59,4 +71,4 @@ export const studyTools = [
     image: "/images/dashboard-tools/tutor.jpg",
     background: "bg-[#eddfdf] dark:bg-stone-800",
   },
-] as const;
+];
