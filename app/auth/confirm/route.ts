@@ -125,11 +125,18 @@ export async function POST(request: NextRequest) {
       type,
     });
     if (error) return confirmationFailure(request, type);
+
+    // Email confirmation establishes a session; clear that new local session
+    // so the user lands on the login modal and signs in deliberately.
+    if (type === "email") {
+      const { error: signOutError } = await supabase.auth.signOut({ scope: "local" });
+      if (signOutError) return confirmationFailure(request, type, true);
+    }
   } catch {
     return confirmationFailure(request, type, true);
   }
 
-  const destination = type === "recovery" ? "/reset-password" : "/dashboard";
+  const destination = type === "recovery" ? "/reset-password" : "/?auth=login";
   const response = NextResponse.redirect(new URL(destination, request.url), 303);
   response.headers.set("Cache-Control", "no-store");
   response.headers.set("Referrer-Policy", "no-referrer");
