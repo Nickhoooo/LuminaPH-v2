@@ -33,6 +33,7 @@ export default function AdminUserDeletion({
   const inFlight = useRef(false);
 
   if (!suspended || !canDelete || !email) return null;
+  const accountEmail = email;
 
   function cancel() {
     if (saving) return;
@@ -44,7 +45,7 @@ export default function AdminUserDeletion({
   }
 
   async function removeAccount() {
-    if (inFlight.current || typedEmail.trim().toLowerCase() !== email.toLowerCase()) {
+    if (inFlight.current || typedEmail.trim().toLowerCase() !== accountEmail.toLowerCase()) {
       setErrorMessage("Enter the account email exactly to confirm.");
       return;
     }
@@ -103,7 +104,7 @@ export default function AdminUserDeletion({
             This cannot be undone. Account: <span className="font-medium">{userName}</span>
           </p>
           <label className="block text-sm font-medium" htmlFor={`delete-email-${userId}`}>
-            Type {email} to confirm
+            Type {accountEmail} to confirm
             <input
               id={`delete-email-${userId}`}
               value={typedEmail}
@@ -130,7 +131,7 @@ export default function AdminUserDeletion({
             <button type="button" disabled={saving} onClick={cancel} className="rounded-lg border border-stone-300 px-3 py-2 text-sm dark:border-stone-600">Cancel</button>
             <button
               type="button"
-              disabled={saving || savingDisabled || typedEmail.trim().toLowerCase() !== email.toLowerCase() || reason.trim().length === 0}
+              disabled={saving || savingDisabled || typedEmail.trim().toLowerCase() !== accountEmail.toLowerCase() || reason.trim().length === 0}
               onClick={removeAccount}
               className="rounded-lg bg-red-700 px-3 py-2 text-sm font-semibold text-white hover:bg-red-800 disabled:opacity-50"
             >
