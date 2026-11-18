@@ -1,12 +1,14 @@
 "use client";
 
 import { useId, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import type { AdminUser } from "@/lib/admin-users";
 import AdminUserUsage from "./AdminUserUsage";
 import AdminUserAllowanceForm from "./AdminUserAllowanceForm";
 import AdminUserSuspension from "./AdminUserSuspension";
 import AdminUserRole from "./AdminUserRole";
+import AdminUserDeletion from "./AdminUserDeletion";
 import {
   loadAdminUserUsage,
   type UsageResult,
@@ -40,6 +42,7 @@ function formatDate(value: string | null) {
 }
 
 export default function AdminUserProfile({ user }: { user: AdminUser }) {
+  const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -197,44 +200,47 @@ export default function AdminUserProfile({ user }: { user: AdminUser }) {
             event.preventDefault();
           }
         }}
-        className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-3xl border border-stone-200 bg-white p-0 text-stone-900 shadow-2xl backdrop:bg-black/50 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+        onClick={(event) => {
+          if (event.target === event.currentTarget && !savingAllowance) closeProfile();
+        }}
+        className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-2xl border border-stone-200 bg-white p-0 text-stone-900 shadow-2xl backdrop:bg-black/45 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
       >
-        <div className="flex items-center justify-between bg-emerald-800 px-6 py-5 text-white dark:bg-emerald-950">
-          <p className="text-sm font-medium">User profile</p>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/95 px-5 py-3 backdrop-blur dark:border-stone-700 dark:bg-stone-900/95">
+          <p className="text-sm font-medium text-stone-600 dark:text-stone-300">User profile</p>
           <button
             type="button"
             autoFocus
             aria-label="Close user profile"
             disabled={savingAllowance}
             onClick={closeProfile}
-            className="rounded-xl p-2 hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white"
+            className="rounded-lg p-2 text-stone-500 hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-emerald-600 dark:text-stone-300 dark:hover:bg-stone-800"
           >
             <X size={20} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="space-y-6 p-6 sm:p-8">
-          <header className="flex items-center gap-4">
+        <div className="space-y-5 p-5 sm:p-6">
+          <header className="flex items-center gap-3">
             <span
               aria-hidden="true"
-              className="grid size-16 shrink-0 place-items-center rounded-2xl bg-emerald-100 text-2xl font-semibold text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100"
+              className="grid size-12 shrink-0 place-items-center rounded-full bg-emerald-100 text-lg font-semibold text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100"
             >
               {initial}
             </span>
             <div className="min-w-0">
-              <h2 id={titleId} className="break-words text-2xl font-semibold">
+              <h2 id={titleId} className="break-words text-xl font-semibold">
                 {user.displayName}
               </h2>
               <p
                 id={descriptionId}
-                className="mt-1 text-sm text-stone-500 dark:text-stone-400"
+                className="mt-0.5 break-all text-sm text-stone-500 dark:text-stone-400"
               >
-                Basic account information
+                {emailText}
               </p>
             </div>
           </header>
 
-          <dl className="grid gap-6 border-t border-stone-200 pt-6 sm:grid-cols-2 dark:border-stone-700">
+          <dl className="grid gap-x-6 gap-y-4 border-y border-stone-200 py-4 sm:grid-cols-2 dark:border-stone-700">
             {details.map(({ label, value }) => (
               <div key={label} className="min-w-0">
                 <dt className="text-sm text-stone-500 dark:text-stone-400">
@@ -262,6 +268,20 @@ export default function AdminUserProfile({ user }: { user: AdminUser }) {
             onBusyChange={setSavingAllowance}
             onSaved={handleSuspensionSaved}
             onRefresh={refreshUsage}
+          />
+
+          <AdminUserDeletion
+            userId={user.id}
+            email={user.email}
+            userName={user.displayName}
+            suspended={suspensionResult?.success === true && suspensionResult.suspension.suspended}
+            canDelete={roleResult?.success === true && roleResult.canManageRoles}
+            savingDisabled={savingAllowance}
+            onBusyChange={setSavingAllowance}
+            onDeleted={() => {
+              closeProfile();
+              router.refresh();
+            }}
           />
 
           <AdminUserRole
